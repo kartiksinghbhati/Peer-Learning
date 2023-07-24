@@ -2,7 +2,6 @@ import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from './Components/Login/Login';
 import Home from "./Components/Home/Home";
-import Navbar from './Components/Navbar/Navbar';
 import StudentCoursePage from "./Components/Student/StudentCoursePage";
 import StudentAssignmentPage1 from "./Components/Student/StudentAssignmentPage1";
 import StudentAssignmentPage2 from "./Components/Student/StudentAssignmentPage2";
@@ -14,9 +13,10 @@ import Calendar from './Components/Calendar/Calendar';
 import Help from './Components/Help/Help';
 import Todo from './Components/Todo/Todo';
 import Query from './Components/Query/Query';
-import Dashboard from './Components/Dashboard/Dashboard';
 import AuthContext from './AuthContext';
 import { ShowNavbar } from "./Components/ShowNavbar/ShowNavbar";
+import TeacherDashboard from "./Components/Dashboard/Teacher/TeacherDashboard";
+import StudentDashboard from "./Components/Dashboard/Student/StudentDashboard";
 
 
 function App() {
@@ -47,7 +47,8 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route exact path="/login" element={<Login />} />
-            <Route exact path="/dashboard" element={<Dashboard />} />
+            <Route exact path="/dashboard/student" element={<StudentDashboard />} />
+            <Route exact path="/dashboard/teacher" element={<TeacherDashboard />} />
             <Route exact path="/Calendar" element={<Calendar />} />
             <Route exact path="/Help" element={<Help />} />
             <Route exact path="/Todo" element={<Todo />} />

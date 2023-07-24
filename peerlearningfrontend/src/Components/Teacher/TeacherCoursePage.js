@@ -16,11 +16,12 @@ import noassignimg from '../Images/noassign.jpg';
 const TeacherCoursePage = () => {
 
     const navigate = useNavigate();
+    const [isNavigating, setIsNavigating] = useState(false);
     const [TeacherName, setTeacherName] = useState([]);
     const [allAssignments, setAllAssignments] = useState([]);
     const [peerAssignments, setPeerAssignments] = useState([]);
     const [css, setcss] = useState(false);
-    const [spin, setSpin] = useState(true);
+    //const [spin, setSpin] = useState(true);
 
     const { userData, course } = useContext(AuthContext);
 
@@ -69,11 +70,18 @@ const TeacherCoursePage = () => {
     
             });
 
-            setSpin(false);
+            //setSpin(false);
         }
       }
+
+      useEffect(() => {
+        setIsNavigating(true); // Set isNavigating to true when navigation starts
+        loadData().then(() => {
+          setIsNavigating(false); // Set isNavigating to false when navigation is completed
+        });
+      }, [userData.token, course, user.email]);
     
-    useEffect(() => { loadData() }, [userData.token]);
+    // useEffect(() => { loadData() }, [userData.token]);
     
 
     let name = "";
@@ -96,24 +104,14 @@ const TeacherCoursePage = () => {
         setcss(false)
     }
     const OnPeople = () => {
-        console.log("Teacher OnPeople Clicked");
         navigate(`/people/${course.id}`);
     }
-
-    // console.log("All Assignments");
-    //           console.log(allAssignments);
-
-    // console.log("Peer Assignments");
-    //               console.log(peerAssignments);
-
-    console.log("spin");
-    console.log(spin);
     
 
     return (
       <>
         {
-          spin ? <Spinner/> :
+          isNavigating ? <Spinner/> :
           <div className="TeacherCoursePage">
             <div className={styles.topBtn}>
               <span className={styles.u} >Stream</span>

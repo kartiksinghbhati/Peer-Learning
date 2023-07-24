@@ -12,17 +12,15 @@ import noassignimg from '../Images/noassign.jpg';
 import Spinner from "../Spinner/Spinner";
 
 
-
-
 const StudentCoursePage = () => {
 
   const navigate = useNavigate();
+  const [isNavigating, setIsNavigating] = useState(false);
   const [TeachersName, setTeachersName] = useState([]);
   const [allAssignments, setAllAssignments] = useState([]);
   const [peerAssignments, setPeerAssignments] = useState([]);
-  const [spin, setSpin] = useState(true);
   const [css, setcss] = useState(false);
-  const { userData, course } = useContext(AuthContext);
+  const { user, userData, course } = useContext(AuthContext);
 
   //const [Role, setRole] = useState("student");
 
@@ -59,7 +57,6 @@ const StudentCoursePage = () => {
             });
           }
 
-          console.log("fetching peer assignments");
 
           fetch(`${API}/api/assignment?course_id=${course.id}`, { 
             method: "GET",
@@ -75,11 +72,16 @@ const StudentCoursePage = () => {
 
         });
 
-        setSpin(false);
     }
   }
 
-  useEffect(() => { loadData() }, [userData.token]);
+  useEffect(() => {
+    setIsNavigating(true); // Set isNavigating to true when navigation starts
+    loadData().then(() => {
+      setIsNavigating(false); // Set isNavigating to false when navigation is completed
+    });
+  }, [userData.token, course, user.email]);
+
 
   var idArr = [];
   if (allAssignments) {
@@ -90,28 +92,20 @@ const StudentCoursePage = () => {
 
   const f1 = () => {
     setcss(true)
-    //console.log("f1 is pressed")
   }
   const f2 = () => {
     setcss(false)
-    //console.log("f2 is pressed")
   }
 
   const OnPeople = () => {
-    //console.log("OnPeople Clicked");
     navigate(`/people/${course.id}`);
   }
-
-  console.log("allAssignments");
-  console.log(allAssignments);
-  console.log("peerAssignments");
-  console.log(peerAssignments);
 
   return (
     <>
 
       {
-        spin ? <Spinner/> :
+        isNavigating ? <Spinner/> :
         <div className="StudentCoursePage">
           <div className={styles.topBtn}>
             <span className={styles.u}>Stream</span>
@@ -156,7 +150,7 @@ const StudentCoursePage = () => {
                       {/* if not display the msg no assignments */}
                       {peerAssignments.length === 0 ? (
                         <div className="null_assignment" style={{ marginLeft: "50%", marginTop: "50px" }}>
-                          <img src="images/noassign.jpg" alt="logo" width="400" height="250" />
+                          <img src={noassignimg} alt="logo" width="400" height="250" />
                           <h3 className={styles.heading}>No assignment with peer review on selected course</h3>
                         </div>
                       ) : (<>

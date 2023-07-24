@@ -17,7 +17,7 @@ export default function Navbar(props) {
 
   const navigate = useNavigate();
 
-  const { user, userData, setUserData } = useContext(AuthContext);
+  const { user, userData, setUserData, setCourse } = useContext(AuthContext);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [Value, setValue] = useState(true);
@@ -37,6 +37,7 @@ export default function Navbar(props) {
     });
     navigate('/login');
   }
+
 
   const truncate = (str) => {
     if (str.length>25) {
@@ -67,6 +68,35 @@ export default function Navbar(props) {
     }
   
   }, [userData.token]);
+
+  const handlesubmitcourse = async (item) => {
+    try {
+      setCourse(item);
+      
+      if (userData.token) {
+        await fetch(`https://classroom.googleapis.com/v1/courses/${item.id}/teachers`, {
+          method: "GET",
+          headers: {
+            'Authorization': `Bearer ${userData.token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+              var len = res.teachers.length;
+              res.teachers.forEach((teacher) => {
+                if (teacher.profile.emailAddress === user.email) {
+                  navigate(`/tcourse/${item.id}`);
+                }
+                else{
+                  navigate(`/scourse/${item.id}`);
+                }
+              });
+          });
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   return (
 
@@ -141,10 +171,7 @@ export default function Navbar(props) {
 
             {courses.map((item, index) => {
               return (
-                <li key={index} onClick={() => {
-                  props.setCourse(item)
-                  navigate.push("/")
-                }}>
+                <li key={index} onClick={() => handlesubmitcourse(item)}>
                   <div className="list-elements">
                   <p className="first_letter">{item.name.charAt(0)}</p>
                   <Link className="sidebar_name" to={item.path}>
