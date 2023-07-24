@@ -1,0 +1,14 @@
+.btn2 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  margin-top: 18px;
+  width: 252px;
+  height: 34px;
+  background: #1a73e8;
+  color: white;
+  border-radius: 6px;
+  letter-spacing: -0.02em;
+  border: none;
+}
