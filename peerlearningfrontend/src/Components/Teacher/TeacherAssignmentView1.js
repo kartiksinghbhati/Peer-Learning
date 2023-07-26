@@ -64,7 +64,8 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
     // console.log(marks);
     // console.log(reviewerCount);
 
-    const { userData } = useContext(AuthContext);
+    const { userData, assignment } = useContext(AuthContext);
+    const _id = assignment._id;
 
     var i = 200;
     var j = 1000;
@@ -100,11 +101,32 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
         }
     }
 
-    const stopPeerLearning = () => {
-        assg.status = "NotAssigned";
-    }
-
     useEffect(() => { loadData() }, [userData.token]);
+
+    const stopPeerLearning = async () => {
+        //assg.status = "NotAssigned";
+
+        try {
+            if (userData.token) {
+                await fetch(`${API}/api/closeassignment?peer_assignment_id=${_id}`, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                  body: JSON.stringify({
+                    peer_assignment_id: _id,
+                  }),
+                })
+                  .then((res) => res.json())
+                  .then((res) => {
+                      alert("Peer Review Stoped");
+                  });
+              }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+    }
 
     return (
         <>
