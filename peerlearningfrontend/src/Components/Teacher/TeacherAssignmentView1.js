@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { G_API } from "../../config";
+import { G_API, API } from "../../config";
 import AuthContext from "../../AuthContext";
 import { ReactComponent as AssignmentIcon } from "./Assests/Assignment.svg";
 import { ReactComponent as MoreIcon } from "./Assests/more.svg";
