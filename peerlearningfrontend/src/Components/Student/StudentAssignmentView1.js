@@ -67,6 +67,8 @@ var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct
 
 function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setActivities }) {
 
+    console.log(self);
+
     const { userData } = useContext(AuthContext);
     const [TeachersName, setTeachersName] = useState([]);
     const [val, setval] = useState(-1);

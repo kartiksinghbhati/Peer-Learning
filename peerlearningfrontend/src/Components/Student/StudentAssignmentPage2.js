@@ -92,6 +92,9 @@ const StudentAssignmentPage2 = () => {
         }        
     }, [role, assignment1._id, assignment1.status]);
 
+    console.log("SELF");
+    console.log(self);
+
 
     return (
         <>
