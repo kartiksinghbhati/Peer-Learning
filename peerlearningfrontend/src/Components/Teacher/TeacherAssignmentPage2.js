@@ -31,7 +31,7 @@ const TeacherAssignmentPage2 = () => {
             await fetch(`${API}/api/peer/assignment?peer_assignment_id=${_id}`)
               .then((res) => res.json())
               .then(async (res) => {
-                console.log(res);
+                //console.log(res);
                 await fetch(
                   `${G_API}/courses/${course_id}/courseWork/${res.assignment_id}`,
                   {
@@ -129,14 +129,6 @@ const TeacherAssignmentPage2 = () => {
 
     useEffect(() => { getTeacherReviews(); }, [role, assignment1._id, assignment1.status]);
 
-    // console.log("assignment");
-    // console.log(assignment1);
-    // console.log("self");
-    // console.log(self);
-    // console.log("activites");
-    // console.log(activities);
-    // console.log("Marks");
-    // console.log(marks);
 
     return (
         <>

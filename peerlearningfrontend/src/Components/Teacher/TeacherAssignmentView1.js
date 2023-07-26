@@ -100,6 +100,10 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
         }
     }
 
+    const stopPeerLearning = () => {
+        assg.status = "NotAssigned";
+    }
+
     useEffect(() => { loadData() }, [userData.token]);
 
     return (
@@ -148,7 +152,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                         <div className={styles.pdfDiv}>
                             <button className={styles.btn1}>Check for Abnormalities </button>
                             <button className={styles.btn2}>View student Reviews</button>
-                            <button className={styles.btn3}>Stop Peer Learning </button>
+                            <button className={styles.btn3} onClick={stopPeerLearning}>Stop Peer Learning </button>
                             <button className={styles.btn4}>View detailed Analytics </button>
                         </div>
                     </div>

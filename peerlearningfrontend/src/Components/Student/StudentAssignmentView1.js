@@ -195,7 +195,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                                             </>
                                     }
                                 </div>
-                                : <div><h1>abcd</h1></div>
+                                : <div><h1>Not Assigned</h1></div>
                                 }
                             {activities.map((activity, u) => (
                                 <div id={styles.yourself}>
