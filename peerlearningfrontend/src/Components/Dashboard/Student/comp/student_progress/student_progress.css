@@ -1,0 +1,87 @@
+.student_progress_container{
+  width: 100%;
+  display: grid;
+  grid-template-columns: 60% 20% 20%;
+  text-align: left;
+  /* border: 1px solid grey; */
+  border-radius: 0.2;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 30px;
+  margin-top: 20px;
+  background-color: white;
+}
+
+.peer_activity{
+  padding-left: 10px;
+  padding-bottom: 15px;
+  margin-left: 1.5rem;
+  margin-top: 1.62rem;
+}
+
+.peer_activity_heading{
+  color: var(--peer-theme-text, #353642);
+  font-family: Montserrat;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: -0.0175rem; 
+}
+
+.cummulative_assignment_grade {
+  border-left: 2px solid #F1F3F4 ;
+  text-align: center;
+  margin: auto 0;
+}
+
+.cummulative_assignment_grade h3{
+  color: var(--card-due-text, rgba(0, 0, 0, 0.55));
+  text-align: center;
+  font-family: Montserrat;
+  font-size: 0.625rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  background-position: center;
+}
+.cummulative_consistency_grade{
+  border-left: 1px solid #F1F3F4 ;
+  text-align: center;
+  margin: auto 0;
+}
+
+.grade_img{
+  /* background-image: url(../../../../public/images/aplus.jpg); */
+  width: 4.58831rem;
+  height: 4.59656rem;
+  /* background: no-repeat; */
+  background-position: center;
+}
+
+.grade_img h3{
+  color: #00FFAC;
+  font-family: Montserrat;
+  font-size: 1.125rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0.0225rem;
+  
+}
+
+.student_progress_course_details{
+  display: grid;
+  grid-template-columns: 75% 25%;
+}
+
+.progress_course_data h5{
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+  color: gray;
+}
+
+.progress_course_no h5{
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}

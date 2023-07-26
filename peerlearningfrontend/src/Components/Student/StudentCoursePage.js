@@ -154,7 +154,7 @@ const StudentCoursePage = () => {
                           <h3 className={styles.heading}>No assignment with peer review on selected course</h3>
                         </div>
                       ) : (<>
-                        {peerAssignments.map((p) => (
+                        {peerAssignments.slice().reverse().map((p) => (
                           <PeerAssignmentCard peerAssignments={p} ids={idArr} />
                         ))
                         }

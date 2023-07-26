@@ -1,0 +1,76 @@
+.student_assignments_container{
+  display: grid;
+  grid-template-rows: 40% 60%;
+  text-align: left;
+  border: 1px solid grey;
+  border-radius: 0.2rem;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 30px;
+  margin-top: 20px;
+  background-color: white;
+}
+
+.student_assignment_heading{
+  padding-left: 2.5%;
+  padding-bottom: 3rem;
+}
+
+.student_assignment_heading_topic{
+  margin-bottom: 0.4rem;
+}
+.student_assignment_heading_teacher{
+  margin-top: 0;
+  padding: 0;
+  margin-bottom: 0;
+  color: grey;
+}
+.student_assignment_content{
+  display: grid;
+  grid-template-columns: 20% 20% 20% 20% 20%;
+  border-top: 1px  solid grey;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.student_assignment_content div{
+  border-right: 1px solid grey;
+  display: grid;
+  /* grid-template-rows: 60% 40%; */
+  margin: 0;
+  padding: 0;
+}
+
+.heading{
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding-top: 10px;
+  color: #353642;
+  font-family: Montserrat;
+  font-size: 2.25rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0.045rem;
+}
+
+.student_assignment_content div .description{
+  margin-top: 5px;
+  margin-bottom: 2px;
+  padding: 0;
+  color: var(--card-due-text, rgba(0, 0, 0, 0.55));
+  text-align: center;
+  font-family: Montserrat;
+  font-size: 0.625rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.student_assignment_content h6{
+  color: grey;
+}
+.student_assignment_content .last{
+  border-right: none;
+}

@@ -67,6 +67,9 @@ const Home = () => {
             <Link to="/Calendar">
               <button className="btm3"><img src={calendarimg} alt="Calendar"/> Calendar</button>
             </Link>
+            <Link to="/Dashboard/student">
+              <button className="btm3"><img src={calendarimg} alt="Calendar"/> Dashboard</button>
+            </Link>
           </div>
         </div>
         <div className={styles.home2}>
