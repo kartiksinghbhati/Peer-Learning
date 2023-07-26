@@ -1,0 +1,83 @@
+.student_page2_container{
+    background-color: #FAFAFB;
+    max-width: 100vw;
+    text-align: left;
+    border-radius: 0.2rem;
+    padding-bottom: 20px;
+    padding-top: 1px;
+    padding-left: 18.25rem;
+    padding-right: 18.25rem;
+  }
+  
+  .student_assignments{
+    background-color: white;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  
+  .student_assignments h3{
+    padding-top: 20px;
+    text-align: left;
+    padding-left: 20px;
+  }
+
+  .course_container{
+    display: grid;
+    grid-template-rows: 40% 60%;
+    text-align: left;
+    border: 1px solid grey;
+    border-radius: 0.2;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 30px;
+    margin-top: 20px;
+    border-top: none;
+    background-color: white;
+  }
+  
+  .course_heading_banner{
+    padding-left: 2.5%;
+    padding-bottom: 3rem;
+    background-image: url('../../../../public/images/Banner4.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0.25rem;
+  }
+  
+  .course_heading_topic{
+    margin-bottom: 0.4rem;
+    color: white;
+  }
+  
+  
+  .student_course_container{
+    display: grid;
+    grid-template-columns: 60% 20% 20%;
+  }
+  .student_cummulative_assignment_grade {
+    border-left: 1px solid black ;
+    text-align: center;
+    margin: auto 0;
+  }
+  
+  .student_cummulative_consistency_grade{
+    border-left: 1px solid black ;
+    text-align: center;
+    margin: auto 0;
+  }
+  .students_course_details{
+    display: grid;
+    grid-template-columns: 75% 25%;
+    padding-left: 10px;
+  }
+  
+  .student_course_data h5{
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+    color: gray;
+  }
+  
+  .student_course_no h5{
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }

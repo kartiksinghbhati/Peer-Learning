@@ -18,6 +18,7 @@ import Query from './Components/Query/Query';
 import AuthContext from './AuthContext';
 import { ShowNavbar } from "./Components/ShowNavbar/ShowNavbar";
 import StudentDashboard from "./Components/Dashboard/Student/StudentDashboard";
+import StudentDbCourse from "./Components/Dashboard/Student/StudentDbCourse";
 
 
 
@@ -50,6 +51,7 @@ function App() {
             <Route exact path="/" element={<Home />} />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/Dashboard/student" element={<StudentDashboard />} />
+            <Route exact path="/Dashboard/student/:course_id" element={<StudentDbCourse />} />
             <Route exact path="/Calendar" element={<Calendar />} />
             <Route exact path="/Help" element={<Help />} />
             <Route exact path="/Todo" element={<TodoList />} />

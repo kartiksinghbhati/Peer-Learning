@@ -7,14 +7,16 @@ function Student_progress() {
         <h3 className="peer_activity_heading">Peer Activity</h3>
         <div className="student_progress_course_details">
           <div className="progress_course_data">
-            <h5>Total courses enrolled : </h5>
-            <h5>Total courses enrolled : </h5>
-            <h5>Total courses enrolled : </h5>
+            <h5>Peer Review Performed : </h5>
+            <h5>Peer Review Recived : </h5>
+            <h5>Query Raised : </h5>
+            <h5>Completion Rate : </h5>
           </div>
           <div className="progress_course_no">
+            <h5>6</h5>
             <h5>24</h5>
-            <h5>24</h5>
-            <h5>24</h5>
+            <h5>3</h5>
+            <h5>89</h5>
           </div>
         </div>
       </div>

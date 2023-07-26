@@ -39,7 +39,7 @@ export default function StudentDashboard() {
     <div className="studentdashboard">
       <div className="container_student_page1">
         <div className="profile_tab_student_progress">
-          <Profile_tab />
+          <Profile_tab len={courses.length}/>
           <Student_progress />
         </div>
 
@@ -56,7 +56,7 @@ export default function StudentDashboard() {
         <div className="course_page1_container">
           <h4 className="course_page_heading">Courses</h4>
           {courses ? courses.map((data,index) => (
-             <Course />
+             <Course key={data.id} data={data} index={index}/>
           )) : null}
         </div>
       </div>
