@@ -10,7 +10,6 @@ import People from "./Assests/People.svg";
 import bottom from "../Images/Bottom.png";
 import Spinner from "../Spinner/Spinner";
 import MarksPopup from "../Popups/MarksPopup";
-import Navbar from "../Navbar/Navbar";
 
 function conversion(hours, minutes) {
     var t;
@@ -60,9 +59,7 @@ function none(hours) {
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function StudentAssignmentView2({ assg, activities, marks, setActivities }) {
-    // console.log(assg);
-    // console.log(activities);
-    // console.log(marks);
+
     const { userData } = useContext(AuthContext);
     const [TeachersName, setTeachersName] = useState([]);
     const [marksvalue, SetmarksValue] = useState(false);
@@ -79,7 +76,6 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities }) {
           })
             .then((res) => res.json())
             .then((res) => {
-                // console.log(res.teachers);
                 var len = res.teachers.length;
                 for (var i = 0; i < len; i++) {
                     if (res.teachers[i].userId == assg.creatorUserId) {
@@ -174,7 +170,7 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities }) {
                                     <p id={styles.rev}>Reviews Performed </p>
                                 </div>
                                 <div id={styles.allreviews}>
-                                    {activities.map((activity,j) => (
+                                    {activities?.map((activity,j) => (
                                         <>
                                         {(j==0) ?
                                             <div id={styles.report}>

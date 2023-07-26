@@ -23,7 +23,6 @@ export default function AssignmentCard(props){
 
   var peerassId = [];
   for (let i = 0; i < props.peerAssignments.length; i++) {
-    console.log("FOR LOOP");
     peerassId.push(props.peerAssignments[i].assignment_id);
   }
 

@@ -66,15 +66,7 @@ function none(hours) {
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setActivities }) {
-    // console.log("StudentCourseView2");
-    // console.log("assignment");
-    // console.log(assg);
-    // console.log("self");
-    // console.log(self);
-    // console.log("activites");
-    // console.log(activities);
-    // console.log("Marks");
-    // console.log(marks);
+
     const { userData } = useContext(AuthContext);
     const [TeachersName, setTeachersName] = useState([]);
     const [val, setval] = useState(-1);
@@ -96,7 +88,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
         })
           .then((res) => res.json())
           .then((res) => {
-              // console.log(res.teachers);
+              
               var len = res.teachers.length;
               for (var i = 0; i < len; i++) {
                   if (res.teachers[i].userId == assg.creatorUserId) {
@@ -110,7 +102,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
 
   useEffect(() => { loadData() }, [userData.token]);
 
-  // console.log(self);
+  
     
     return (
         <>
@@ -178,7 +170,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                     <div className={styles.Evaluation}>
                         <p id={styles.reviews}>Peer Reviews to be performed </p>
                         <div className={styles.Main}>
-                        {console.log(self._id)}
+                        
                             {self._id ?
                                 <div id={styles.yourself}>
                                     <p id={styles.content}>Yourself </p>

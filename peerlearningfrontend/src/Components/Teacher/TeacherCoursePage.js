@@ -23,7 +23,7 @@ const TeacherCoursePage = () => {
     const [css, setcss] = useState(false);
     //const [spin, setSpin] = useState(true);
 
-    const { userData, course } = useContext(AuthContext);
+    const { user, userData, course } = useContext(AuthContext);
 
     const loadData = async () =>{
         if (userData.token && course.id) {

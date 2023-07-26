@@ -11,12 +11,14 @@ import TeacherAssignmentPage2 from "./Components/Teacher/TeacherAssignmentPage2"
 import TeacherPeople from "./Components/People/TeacherPeople";
 import Calendar from './Components/Calendar/Calendar';
 import Help from './Components/Help/Help';
-import Todo from './Components/Todo/Todo';
+import TodoList from './Components/Todo/TodoList';
+import Missing from './Components/Todo/Missing';
+import Done from './Components/Todo/Done';
 import Query from './Components/Query/Query';
 import AuthContext from './AuthContext';
 import { ShowNavbar } from "./Components/ShowNavbar/ShowNavbar";
-import TeacherDashboard from "./Components/Dashboard/Teacher/TeacherDashboard";
 import StudentDashboard from "./Components/Dashboard/Student/StudentDashboard";
+
 
 
 function App() {
@@ -48,10 +50,11 @@ function App() {
             <Route exact path="/" element={<Home />} />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/dashboard/student" element={<StudentDashboard />} />
-            <Route exact path="/dashboard/teacher" element={<TeacherDashboard />} />
             <Route exact path="/Calendar" element={<Calendar />} />
             <Route exact path="/Help" element={<Help />} />
-            <Route exact path="/Todo" element={<Todo />} />
+            <Route exact path="/Todo" element={<TodoList />} />
+            <Route exact path="/Missing" element={<Missing />}/>
+            <Route exact path="/Done" element={<Done />}/>
             <Route exact path="/Query" element={<Query />} />
             <Route exact path="/scourse/:course_id" element={<StudentCoursePage />} />
             <Route exact path="/tcourse/:course_id" element={<TeacherCoursePage />} />

@@ -38,9 +38,9 @@ const PeerAssignmentCard = (props) => {
 
   return (
   <>
-    {props.ids.map((e)=>(
+    {props.ids?.map((e)=>(
       e === props.peerAssignments.assignment_id ? 
-    <div onClick={OnCard} className="submain" >
+    <div onClick={OnCard} className="submain" key={props.peerAssignments.assignment_id}>
       <div className="left-part">
         <div className="Image"><img src={asimg} alt="Assignment-Image"/></div>
         <div>
