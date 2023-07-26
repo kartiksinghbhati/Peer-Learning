@@ -50,11 +50,13 @@ export default function Submitpop({ Sub, SetSub, self, setSelf, activities, setA
                 (res) => {
                     setOpen(true);
                     setMessage("Successfully saved review");
+                    alert("Successfully saved review")
                     setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 },
                 (err) => {
                     setOpen(true);
                     setMessage("Some thing went wrong while saving review");
+                    alert("Some thing went wrong while saving review")
                     setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 }
             );
