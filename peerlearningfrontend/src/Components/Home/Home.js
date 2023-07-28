@@ -84,7 +84,9 @@ const Home = () => {
       <div className="home">
         <div className="home1">
           <div className="head">
-            <button className="btm3"><img src={queryimg} alt="Queries" /> Queries</button>
+            <Link to="/Query">
+              <button className="btm3"><img src={queryimg} alt="Queries" /> Queries</button>
+            </Link>
             <Link to="/Todo">
               <button className="btm3"><img src={todoimg} alt="Todos" /> To-Do</button>
             </Link>

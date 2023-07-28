@@ -22,9 +22,6 @@ const TeacherAssignmentPage2 = () => {
     const [spin1, setSpin1] = useState(true);
     const [spin2, setSpin2] = useState(true);
 
-    // console.log("id: "+_id);
-    // console.log("course id: "+course_id);
-
     const loadData = async () =>{
         if (userData.token) {
             // setUserData((u) => ({ ...u, loader: u.loader + 1 }));
