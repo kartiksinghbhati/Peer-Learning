@@ -77,6 +77,12 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
     const [TeacherName, setTeacherName] = useState([]);
     const [spin, setspin] = useState(true);
 
+    const truncate = (str) => {
+        if (str) {
+          return str.length > 60 ? str.substring(0, 59) + "..." : str;
+        }
+    }
+      
     const loadData = async () =>{
 
         if (userData.token) {
@@ -138,7 +144,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                                 <AssignmentIcon className={styles.AssgIcon} />
                             </div>
                             <div className={styles.midDiv}>
-                                <h4 className={styles.AssgnName}>{assg.assignment_title}</h4>
+                                <h4 className={styles.AssgnName}>{truncate(assg.assignment_title)}</h4>
                                 <p className={styles.teacher}>{TeacherName} <span className={styles.dot}>.</span> {month[(assg.creationTime.substring(5, 7)) - 1]} {assg.creationTime.substring(8, 10)}</p>
                                 <div className={styles.pointsanddue}>
                                     {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Ungraded</p>}

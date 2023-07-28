@@ -22,6 +22,8 @@ const TeacherAssignmentPage2 = () => {
     const [spin1, setSpin1] = useState(true);
     const [spin2, setSpin2] = useState(true);
 
+
+
     const loadData = async () =>{
         if (userData.token) {
             // setUserData((u) => ({ ...u, loader: u.loader + 1 }));
@@ -56,25 +58,28 @@ const TeacherAssignmentPage2 = () => {
             .then((res) => res.json())
             .then((res) => {
             // console.log("res for getting reviews and comments");
-            // console.log(res);
-            fetch(
-                `https://classroom.googleapis.com/v1/courses/${course_id}/students`, //gets the list of all students enrolled in the course
-                {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${userData.token}`,
-                },
-                }
-            )
+             console.log(res);
+                fetch(
+                    `https://classroom.googleapis.com/v1/courses/${course_id}/students`, //gets the list of all students enrolled in the course
+                    {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${userData.token}`,
+                    },
+                    }
+                )
                 .then((r) => r.json())
                 .then((r) => {
                 setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 
                 let a = [];
                 let authorMap = {};  //for storing the list of all students info with their id as key
+                //console.log(r.students);
                 r.students.forEach((s) => {
                     authorMap[s.userId] = [s];
                 });
+
+                console.log(authorMap);
                 
                 res.forEach((activity) => {
                     if (authorMap[activity.author_id] !== undefined) {
@@ -132,8 +137,6 @@ const TeacherAssignmentPage2 = () => {
         {spin1 && spin2 ? <Spinner/>
             :   <div className="dashboard">
                     <div className="contain">
-                        {/* <TeacherAssignmentView2 assg={assignment1} /> */}
-                        {/* <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount}/> */}
                         {  
                             assignment1.status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount}/>
                             : <TeacherAssignmentView2 assg={assignment1} /> 

@@ -107,7 +107,7 @@ const TeacherCoursePage = () => {
         navigate(`/people/${course.id}`);
     }
 
-    console.log(peerAssignments);
+    //console.log(peerAssignments);
     
 
     return (
@@ -146,8 +146,8 @@ const TeacherCoursePage = () => {
                                 ) : (<>
                                     <AddPeerAssignment allAssignments={allAssignments} setPeerAssignments={setPeerAssignments}/>
                                     
-                                    {allAssignments.map((p) => (
-                                        <AllAssignmentCard assignment={p} peerAssignments={peerAssignments}/>
+                                    {allAssignments.map((p, index) => (
+                                        <AllAssignmentCard key={index} assignment={p} peerAssignments={peerAssignments}/>
                                     ))
                                     }
                                 </>)}
@@ -161,8 +161,8 @@ const TeacherCoursePage = () => {
                                         <h3 className={styles.heading}>No assignment with peer review on selected course</h3>
                                     </div>
                                 ) : (<>
-                                    {peerAssignments.slice().reverse().map((p) => (
-                                        <PeerAssignmentCard peerAssignments={p} ids={idArr} />
+                                    {peerAssignments.slice().reverse().map((p, index) => (
+                                        <PeerAssignmentCard key={index} peerAssignments={p} ids={idArr} />
                                     ))
                                     }
                                 </>)}

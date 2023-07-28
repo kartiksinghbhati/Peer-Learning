@@ -43,6 +43,12 @@ function StudentAssignmentPage1() {
 
     useEffect(() => { loadData() }, [userData.token]);
 
+    const truncate = (str) => {
+        if (str) {
+          return str.length > 60 ? str.substring(0, 59) + "..." : str;
+        }
+    }
+
     function conversion(hours, minutes) {
         var t;
         var h = hours + 5;
@@ -103,7 +109,7 @@ function StudentAssignmentPage1() {
                                 <AssignmentIcon className={styles.AssgIcon} />
                             </div>
                             <div className={styles.midDiv}>
-                                <h4 className={styles.AssgnName}>{assignment.title}</h4>
+                                <h4 className={styles.AssgnName}>{truncate(assignment.title)}</h4>
                                 <p className={styles.teacher}>{TeacherName} <span className={styles.dot}>.</span> {month[(assignment.creationTime.substring(5, 7)) - 1]} {assignment.creationTime.substring(8, 10)}</p>
                                 <div className={styles.pointsanddue}>
                                     {assignment.maxPoints ? <p className={styles.points}>{assignment.maxPoints} Points</p> : <p className={styles.points}>Ungraded</p>}

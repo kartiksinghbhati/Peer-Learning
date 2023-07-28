@@ -22,6 +22,8 @@ const StudentCoursePage = () => {
   const [css, setcss] = useState(false);
   const { user, userData, course } = useContext(AuthContext);
 
+  
+
 
   const loadData = async () =>{
     if (userData.token && course.id) {
@@ -131,8 +133,8 @@ const StudentCoursePage = () => {
                 {/* if not display the msg no assignments */}
                 {allAssignments ? (
                     <>
-                      {allAssignments.map((p) => (
-                        <AssignmentCard assignment={p} peerAssignments={peerAssignments}/>
+                      {allAssignments.map((p, index) => (
+                        <AssignmentCard key={index} assignment={p} peerAssignments={peerAssignments}/>
                       ))
                       }
                     </>
@@ -153,8 +155,8 @@ const StudentCoursePage = () => {
                           <h3 className={styles.heading}>No assignment with peer review on selected course</h3>
                         </div>
                       ) : (<>
-                        {peerAssignments.slice().reverse().map((p) => (
-                          <PeerAssignmentCard peerAssignments={p} ids={idArr} />
+                        {peerAssignments.slice().reverse().map((p, index) => (
+                          <PeerAssignmentCard key={index} peerAssignments={p} ids={idArr} />
                         ))
                         }
                       </>)}

@@ -67,7 +67,7 @@ var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct
 
 function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setActivities }) {
 
-    console.log(self);
+    
 
     const { userData } = useContext(AuthContext);
     const [TeachersName, setTeachersName] = useState([]);
@@ -78,6 +78,12 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
     const [selfFinalise, SetselfFinalise] = useState(false);
     const [sub, setsub] = useState(false);
     const [marksvalue, SetmarksValue] = useState(false);
+
+    const truncate = (str) => {
+        if (str) {
+          return str.length > 60 ? str.substring(0, 59) + "..." : str;
+        }
+    }
 
     const loadData = async () =>{
 
@@ -115,7 +121,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                                 <AssignmentIcon className={styles.AssgIcon} />
                             </div>
                             <div className={styles.midDiv}>
-                                <h4 className={styles.AssgnName}>{assg.assignment_title}</h4>
+                                <h4 className={styles.AssgnName}>{truncate(assg.assignment_title)}</h4>
                                 <p className={styles.teacher}>{TeachersName} <span className={styles.dot}>.</span> {month[(assg.creationTime.substring(5, 7)) - 1]} {assg.creationTime.substring(8, 10)}</p>
                                 <div className={styles.pointsanddue}>
                                     {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Points not Assigned</p>}
