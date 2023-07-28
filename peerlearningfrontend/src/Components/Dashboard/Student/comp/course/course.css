@@ -7,7 +7,6 @@
   margin-left: 20px;
   margin-right: 20px;
   margin-bottom: 30px;
-  margin-top: 20px;
   border-top: none;
   background-color: white;
 }
@@ -22,8 +21,9 @@
 }
 
 .course_heading_topic{
-  margin-bottom: 0.4rem;
+  /* margin-bottom: 0.4rem; */
   color: white;
+  margin-top: 2rem;
 }
 
 

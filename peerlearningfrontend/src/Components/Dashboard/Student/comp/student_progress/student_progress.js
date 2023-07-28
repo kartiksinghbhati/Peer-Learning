@@ -21,11 +21,12 @@ function Student_progress() {
         </div>
       </div>
       <div className="cummulative_assignment_grade">
-        <div className="grade_img"></div>
-        <h3>Cummulative Assignment Grade</h3>
+        <h3>A+</h3>
+        <h6>Cummulative Assignment Grade</h6>
       </div>
       <div className="cummulative_consistency_grade">
         <h3>B</h3>
+        <h6>Cummulative Consistency Grade</h6>
       </div>
     </div>
   );

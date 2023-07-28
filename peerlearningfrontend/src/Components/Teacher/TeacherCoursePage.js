@@ -106,6 +106,8 @@ const TeacherCoursePage = () => {
     const OnPeople = () => {
         navigate(`/people/${course.id}`);
     }
+
+    console.log(peerAssignments);
     
 
     return (

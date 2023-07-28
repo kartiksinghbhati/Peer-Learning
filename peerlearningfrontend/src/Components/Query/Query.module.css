@@ -1,0 +1,24 @@
+.querytopBtn{
+   margin-top: 100px;
+   margin-left: calc(3%) !important;
+   font-family: 'Montserrat', sans-serif !important;
+   font-size: 18px;
+   font-weight: 600;
+   line-height: 20px;
+   text-align: center;
+   cursor: pointer;
+   padding-right: 40px;
+}
+
+.querytopBtn span{
+   margin-right: 25px;
+}
+
+.queryu{
+   border-bottom: 3px solid #1A73E8;
+   color: #1A73E8
+}
+
+.querynotu{
+   border-bottom: 1px solid white;
+}

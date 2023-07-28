@@ -1,0 +1,94 @@
+.teacher_questions_container{
+  display: grid;
+  grid-template-rows: 40% 60%;
+  text-align: left;
+  border: 1px solid #DBDCE0;
+  border-radius: 0.2rem;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 30px;
+  margin-top: 20px;
+  background-color: white;
+}
+
+.teacher_questions_heading{
+  padding-left: 2.5%;
+  padding-bottom: 3rem;
+}
+
+.teacher_questions_heading_topic{
+  margin-bottom: 0.4rem;
+  padding-top: 10px;
+}
+.teacher_questions_heading_teacher{
+  margin-top: 0;
+  padding: 0;
+  margin-bottom: 0;
+  color: grey;
+}
+.teacher_questions_content{
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  border-top: 1px  solid #DBDCE0;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.teacher_questions_content div{
+  border-right: none;
+  display: grid;
+  /* grid-template-rows: 60% 40%; */
+  margin: 0;
+  padding: 0;
+}
+
+.questions_column_left_border{
+  border-right: none;
+  text-align: center;
+  margin: auto 0;
+  position: relative;
+}
+
+.questions_column_left_border::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: -5px; 
+  width: 0;
+  border-left: 1px solid #DBDCE0; 
+  height: calc(100% - 20px);
+}
+
+.heading{
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding-top: 10px;
+  color: #353642;
+  font-family: Montserrat;
+  font-size: 2.25rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0.045rem;
+}
+
+.teacher_questions_content div .description{
+  margin-top: 5px;
+  margin-bottom: 2px;
+  padding: 0;
+  color: var(--card-due-text, rgba(0, 0, 0, 0.55));
+  text-align: center;
+  font-family: Montserrat;
+  font-size: 0.625rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.teacher_questions_content h6{
+  color: grey;
+}
+.teacher_questions_content .last{
+  border-right: none;
+}

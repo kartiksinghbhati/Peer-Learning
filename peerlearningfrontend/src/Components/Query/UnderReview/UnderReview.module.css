@@ -1,0 +1,53 @@
+.assigned1 {
+   display: flex;
+   padding-top: 34px;
+   margin-left: 25%;
+}
+
+#week1 {
+   height: 22px;
+   font-family: 'Montserrat', sans-serif;
+   font-style: normal;
+   font-weight: 500;
+   font-size: 18px;
+   align-items: center;
+   color: #353642;
+   margin: 150px 0px 0px 0px;
+   display: flex;
+}
+
+#week2 {
+   height: 22px;
+   font-family: 'Montserrat', sans-serif;
+   font-style: normal;
+   font-weight: 500;
+   font-size: 18px;
+   display: flex;
+   align-items: center;
+   color: #353642;
+   margin-top: 50px;
+}
+
+#week3 {
+   height: 22px;
+   font-family: 'Montserrat', sans-serif;
+   font-style: normal;
+   font-weight: 500;
+   font-size: 18px;
+   display: flex;
+   align-items: center;
+   color: #353642;
+   margin: 50px 0px 0px 0px;
+}
+
+#Arrow1 {
+   margin-left: 640px;
+}
+
+#Arrow2 {
+   margin-left: 670px;
+}
+
+.btm{
+   margin-bottom: 0%;
+}

@@ -1,0 +1,79 @@
+ .querytopBtn{
+    margin-top: 100px;
+    margin-left: calc(3%) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+    padding-right: 40px;
+ }
+ 
+ .querytopBtn span{
+    margin-right: 25px;
+ }
+ 
+ .queryu{
+    border-bottom: 1px solid white;
+ }
+ 
+ .querynotu{
+    border-bottom: 3px solid #1A73E8;
+    color: #1A73E8;
+    
+ }
+ 
+ .assigned1{
+    display: flex;
+    margin-left: 25%;
+ }
+ 
+ 
+ #week1{
+    height: 22px;
+    font-family: 'Montserrat',sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    align-items: center;
+    color: #353642;
+    margin:150px 0px 0px 0px;
+    display: flex;
+ }
+ 
+ #week2{
+    height: 22px;
+    font-family: 'Montserrat',sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    color: #353642;
+    margin-top:50px;
+ }
+ 
+ #week3{
+    height: 22px;
+    font-family: 'Montserrat',sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    color: #353642;
+    margin:50px 0px 0px 0px;
+ }
+ 
+ #Arrow1{
+    margin-left: 640px;
+ }
+ 
+ #Arrow2{
+    margin-left: 670px;
+ }
+ 
+ 
+ 
+ 

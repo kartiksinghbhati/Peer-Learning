@@ -1,0 +1,95 @@
+.teacherDbAssignmentContainer{
+  width: 100vw;
+  margin-top: 80px;
+  background-color: #FAFAFB;
+  text-align: left;
+  border-radius: 0.2rem;
+  padding-bottom: 20px;
+  padding-top: 1px;
+  padding-left: 8.25rem;
+  padding-right: 8.25rem;
+}
+
+.teacherAssignment{
+background-color: white;
+}
+
+.teacherAssignment h3{
+padding-top: 20px;
+text-align: left;
+padding-left: 20px;
+}
+
+.assignment{
+  display: grid;
+  grid-template-rows: 40% 60%;
+  text-align: left;
+  border: 1px solid #DBDCE0;
+  border-radius: 0.2;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+
+.assignment_heading{
+  padding-left: 2.5%;
+  padding-bottom: 3rem;
+}
+
+.assignment_heading_topic_with_banner{
+  margin-bottom: 0.4rem;
+  color: black;
+  margin-top: 10px;
+}
+.assignment_heading_teacher{
+  margin-top: 0;
+  padding: 0;
+  margin-bottom: 0;
+  color: grey;
+}
+.assignment_content{
+  display: grid;
+  grid-template-columns: 20% 20% 20% 20% 20%;
+  border-top: 1px  solid #DBDCE0;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.assignment_content_leftBorder{
+  display: grid;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.assignment_content_left_border::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: -5px; 
+  width: 0;
+  border-left: 1px solid #DBDCE0; 
+  height: calc(100% - 20px);
+}
+
+.assignment_content div .heading{
+  margin-top: 10px;
+  margin-bottom: 0px;
+  padding: 0;
+
+}
+
+.assignment_content div .description{
+  margin-top: 0px;
+  margin-bottom: 2px;
+  padding: 0;
+}
+
+.assignment_content h6{
+  color: grey;
+}
+.assignment_content .last{
+  border-right: none;
+}

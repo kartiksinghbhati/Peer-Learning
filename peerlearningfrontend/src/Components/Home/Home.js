@@ -6,8 +6,10 @@ import AuthContext from '../../AuthContext';
 import Spinner from '../Spinner/Spinner';
 import bottomimg  from '../Images/Bottom.png';
 import calendarimg  from '../Images/Calendar.png';
+import dashboardimg  from '../Images/dashboard.png';
 import queryimg  from '../Images/Query.png';
 import todoimg  from '../Images/To-do.png';
+import rev from "../Images/Review.png";
 
 
 
@@ -16,8 +18,9 @@ const Home = () => {
   const navigate = useNavigate();
 
   const [courses, setCourses] = useState([]);
+  const [isTeacher, setIsTeacher] = useState(true);
   const [spin, setSpin] = useState(true);
-  const { userData, setUserData } = useContext(AuthContext);
+  const { user, userData, setUserData } = useContext(AuthContext);
 
 
   const myFunction1 = async () =>{
@@ -44,8 +47,29 @@ const Home = () => {
           setUserData((u) => ({ ...u, loader: u.loader - 1 }));
           setCourses(res.courses);
           //console.log(res.courses);
+
+          let len = res.courses.length;
+          for (let i = 0; i< len; i++) {
+            fetch(`https://classroom.googleapis.com/v1/courses/${res.courses[i].id}/teachers`, {
+              method: "GET",
+              headers: {
+                'Authorization': `Bearer ${userData.token}`,
+              },
+            })
+              .then((r) => r.json())
+              .then((r) => {
+                  r.teachers.forEach((teacher) => {
+                    if (teacher.profile.emailAddress !== user.email) {
+                      setIsTeacher(false);
+                    }
+                  });
+              });
+          }
+
           setSpin(false);
         });
+
+
   
     }
   }
@@ -67,9 +91,21 @@ const Home = () => {
             <Link to="/Calendar">
               <button className="btm3"><img src={calendarimg} alt="Calendar"/> Calendar</button>
             </Link>
-            <Link to="/Dashboard/student">
-              <button className="btm3"><img src={calendarimg} alt="Calendar"/> Dashboard</button>
-            </Link>
+            {
+                isTeacher ?
+                <button className="btm3"><img src={rev} alt="Review" /> Review</button> :
+                null
+            }
+            {
+                isTeacher ?
+                  <Link to="/Dashboard/teacher">
+                    <button className="btm3"><img src={dashboardimg} alt="dashboard"/> Dashboard</button>
+                  </Link>
+                :
+                  <Link to="/Dashboard/student">
+                    <button className="btm3"><img src={dashboardimg} alt="dashboard"/> Dashboard</button>
+                  </Link>
+            }
           </div>
         </div>
         <div className={styles.home2}>

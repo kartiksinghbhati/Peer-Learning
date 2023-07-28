@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-function Dropdown() {
+function TeacherDropdown() {
   const [age, setAge] = React.useState('');
 
   const handleChange = (event) => {
@@ -12,7 +12,7 @@ function Dropdown() {
   };
 
   return (
-    <Box sx={{ minWidth: 120, width: '300px' }}>
+    <Box sx={{ minWidth: 120, width: '200px' }}>
       <FormControl fullWidth>
         <Select
           value={age}
@@ -22,7 +22,7 @@ function Dropdown() {
           sx={{ fontSize: '0.8em', height: '2.5em', backgroundColor: '#e3e1e1' }}
         >
           <MenuItem value="" sx={{ fontSize: '0.8em' }}>
-            Choose View
+            You vs Class - Bar Chart
           </MenuItem>
           <MenuItem value={10} sx={{ fontSize: '0.8em' }}>Ten</MenuItem>
           <MenuItem value={20} sx={{ fontSize: '0.8em' }}>Twenty</MenuItem>
@@ -33,5 +33,5 @@ function Dropdown() {
   );
 }
 
-export default Dropdown;
+export default TeacherDropdown;
 

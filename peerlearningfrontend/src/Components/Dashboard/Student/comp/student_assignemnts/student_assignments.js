@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import './student_assignments.css'
-function Student_assignments() {
+import AuthContext from "../../../../../AuthContext";
+import { useNavigate } from "react-router-dom";
+
+function Student_assignments(props) {
+
+  const navigate = useNavigate();
+  const { setAssignment } = useContext(AuthContext);
+
+  const OnAssignmentClick = () => {
+    setAssignment(props.peerAssignment);
+    navigate(`/Dashboard/student/${props.peerAssignment.course_id}/${props.peerAssignment._id}`);
+  }
+
   return (
     <div className="student_assignments_container">
-      <div className="student_assignment_heading">
+      <div className="student_assignment_heading" onClick={OnAssignmentClick}>
         <h4 className="student_assignment_heading_topic">
-          Testing Assignment Review System
+        {props.peerAssignment.assignment_title}
         </h4>
-        <h6 className="student_assignment_heading_teacher">Pratik Shah Nov,21,2021</h6>
+        <h6 className="student_assignment_heading_teacher">{props.TeachersName}</h6>
       </div>
       <div className="student_assignment_content">
         <div>

@@ -22,7 +22,6 @@ const StudentCoursePage = () => {
   const [css, setcss] = useState(false);
   const { user, userData, course } = useContext(AuthContext);
 
-  //const [Role, setRole] = useState("student");
 
   const loadData = async () =>{
     if (userData.token && course.id) {

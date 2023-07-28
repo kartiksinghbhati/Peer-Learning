@@ -19,6 +19,12 @@ import AuthContext from './AuthContext';
 import { ShowNavbar } from "./Components/ShowNavbar/ShowNavbar";
 import StudentDashboard from "./Components/Dashboard/Student/StudentDashboard";
 import StudentDbCourse from "./Components/Dashboard/Student/StudentDbCourse";
+import StudentDbAssignment from "./Components/Dashboard/Student/StudentDbAssignment";
+import Resolved from "./Components/Query/Resolved/Resolved";
+import TeacherDashboard from "./Components/Dashboard/Teacher1/TeacherDashboard";
+import TeacherDbCourse from "./Components/Dashboard/Teacher1/TeacherDbCourse";
+import TeacherDbAssignment from "./Components/Dashboard/Teacher1/TeacherDbAssignment";
+
 
 
 
@@ -52,12 +58,17 @@ function App() {
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/Dashboard/student" element={<StudentDashboard />} />
             <Route exact path="/Dashboard/student/:course_id" element={<StudentDbCourse />} />
+            <Route exact path="/Dashboard/student/:course_id/:_id" element={<StudentDbAssignment />} />
+            <Route exact path="/Dashboard/teacher" element={<TeacherDashboard />} />
+            <Route exact path="/Dashboard/teacher/:course_id" element={<TeacherDbCourse />} />
+            <Route exact path="/Dashboard/teacher/:course_id/:_id" element={<TeacherDbAssignment />} />
             <Route exact path="/Calendar" element={<Calendar />} />
             <Route exact path="/Help" element={<Help />} />
             <Route exact path="/Todo" element={<TodoList />} />
             <Route exact path="/Missing" element={<Missing />}/>
             <Route exact path="/Done" element={<Done />}/>
             <Route exact path="/Query" element={<Query />} />
+            <Route exact path="/Resolved" element={<Resolved />} />
             <Route exact path="/scourse/:course_id" element={<StudentCoursePage />} />
             <Route exact path="/tcourse/:course_id" element={<TeacherCoursePage />} />
             <Route exact path="/people/:course_id" element={<TeacherPeople />} />

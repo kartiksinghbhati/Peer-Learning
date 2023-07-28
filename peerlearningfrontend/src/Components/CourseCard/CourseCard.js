@@ -50,6 +50,10 @@ export default function CourseCard(props) {
   
     useEffect(() => { loadData() }, [userData.token]);
 
+    // const setCourseData = (courseData) => {
+    //     setCourse(courseData);
+    // }
+
     const OnCourseClick = () => {
         setCourse(props.data);
         if(role==="student"){
@@ -59,6 +63,12 @@ export default function CourseCard(props) {
             navigate(`/tcourse/${props.data.id}`);
         }
     }
+
+    const handleButtonClick = () => {
+        setCourse(props.data);
+    };
+
+    
 
     return (
         <>
@@ -70,9 +80,18 @@ export default function CourseCard(props) {
                 </div>
                 <div className="classCard__middle"></div>
                 <div className="foot">
-                    <Link to="/dashboard">
-                    <button className="btm2"><img src={dashboardimg} alt="dashboard"/> Dashboard</button>
-                    </Link>
+                    {
+                        role==='student' ?
+                            <Link to={`/Dashboard/student/${props.data.id}`}>
+                            <button className="btm2" onClick={handleButtonClick}><img src={dashboardimg} alt="dashboard"/> Dashboard</button>
+                            </Link>
+                        :
+                            <Link to={`/Dashboard/teacher/${props.data.id}`}>
+                            <button className="btm2" onClick={handleButtonClick}><img src={dashboardimg} alt="dashboard"/> Dashboard</button>
+                            </Link>
+                    }
+                    
+                     
                     <a href={props.data.alternateLink}>
                     <button className="btm2"><img src={googleclassroomimg} alt="classroom"/> Classroom</button>
                     </a>

@@ -1,0 +1,79 @@
+.profile{
+  display: grid;
+  grid-template-rows: 40% 60%;
+  text-align: left;
+  /* border: 1px solid grey; */
+  border-radius: 0.2rem;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 30px;
+  background-color: white;
+}
+
+.profile_details{
+  padding-left: 2.5%;
+  padding-bottom: 3rem;
+  display: grid;
+  grid-template-columns: 10% 90%;
+}
+
+.profile_image{
+  /* background-image: url(../../../../public/images/teacher_image/messi.jpeg); */
+  margin-top: 10px;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+.teacher_name{
+  margin-bottom: 0.4rem;
+}
+.teacher_email{
+  margin-top: 0;
+  padding: 0;
+  margin-bottom: 0;
+  color: grey;
+}
+.profile_content{
+  display: grid;
+  grid-template-columns: 20% 20% 20% 20% 20%;
+  border-top: 1px  solid #DBDCE0;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.profile_content_left_border{
+  display: grid;
+  /* grid-template-rows: 60% 40%; */
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.profile_content_left_border::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: -5px; 
+  width: 0;
+  border-left: 1px solid #DBDCE0; 
+  height: calc(100% - 20px);
+}
+
+.profile_content div .heading{
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding: 0;
+}
+
+.profile_content div .description{
+  margin-top: 5px;
+  margin-bottom: 2px;
+  padding: 0;
+}
+
+.profile_content h6{
+  color: grey;
+}
+.profile_content .last{
+  border-right: none;
+}
