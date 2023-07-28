@@ -11,6 +11,12 @@ export default function AssignmentCard(props){
 
   const { role, setAssignment } = useContext(AuthContext);
 
+  const truncate = (str) => {
+    if (str) {
+      return str.length > 75 ? str.substring(0, 75) + "..." : str;
+    }
+  }
+
   var day = '-';
   var month = '-';
   var year = '-';
@@ -59,7 +65,7 @@ export default function AssignmentCard(props){
         <div className="left-part">
             <div className="Image"><img src={assignmentimg} alt="assignmentimg"/></div>
             <div>
-            <div className="section">{props.assignment.title}</div>
+            <div className="section">{truncate(props.assignment.title)}</div>
             <div className="date">{day}/{month}/{year}</div>
             </div>
         </div>

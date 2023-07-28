@@ -44,7 +44,7 @@ const PeerAssignmentCard = (props) => {
       <div className="left-part">
         <div className="Image"><img src={asimg} alt="Assignment-Image"/></div>
         <div>
-          <div className="section">{props.peerAssignments.assignment_title}</div>
+          <div className="section">{truncate(props.peerAssignments.assignment_title)}</div>
           <div className="date">{day}/{month}/{year}</div>
         </div>
       </div>

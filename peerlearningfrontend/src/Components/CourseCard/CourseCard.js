@@ -21,8 +21,8 @@ export default function CourseCard(props) {
 
     const [TeacherName, setTeacherName] = useState([]);
     const [Photo, setPhoto] = useState([]);
-    //const [role, setRole] = useState("student");
-    const { user, userData, setCourse, role, setRole } = useContext(AuthContext);
+    const [currentRole, setCurrentRole] = useState("student");
+    const { user, userData, setCourse, setRole } = useContext(AuthContext);
 
     let arr = ["Banner1.png", "Banner2.png", "Banner3.png", "Banner4.png", "Banner5.png"];
 
@@ -41,7 +41,7 @@ export default function CourseCard(props) {
                   setTeacherName(res.teachers[len-1].profile.name.fullName);
                   res.teachers.forEach((teacher) => {
                     if (teacher.profile.emailAddress === user.email) {
-                      setRole("teacher");
+                      setCurrentRole("teacher");
                     }
                   });
               });
@@ -50,13 +50,10 @@ export default function CourseCard(props) {
   
     useEffect(() => { loadData() }, [userData.token]);
 
-    // const setCourseData = (courseData) => {
-    //     setCourse(courseData);
-    // }
-
     const OnCourseClick = () => {
         setCourse(props.data);
-        if(role==="student"){
+        setRole(currentRole);
+        if(currentRole==="student"){
             navigate(`/scourse/${props.data.id}`);
         }
         else{
@@ -81,7 +78,7 @@ export default function CourseCard(props) {
                 <div className="classCard__middle"></div>
                 <div className="foot">
                     {
-                        role==='student' ?
+                        currentRole==='student' ?
                             <Link to={`/Dashboard/student/${props.data.id}`}>
                             <button className="btm2" onClick={handleButtonClick}><img src={dashboardimg} alt="dashboard"/> Dashboard</button>
                             </Link>
