@@ -48,9 +48,6 @@ function App() {
     <div>
 
       <AuthContext.Provider value={{ user, setUser, userData, setUserData, course, setCourse, assignment, setAssignment, role, setRole, open, setOpen, message, setMessage }}>
-
-
-
         <Router>
           <ShowNavbar/>
           <Routes>
@@ -76,7 +73,6 @@ function App() {
             <Route exact path="/inacourse/:course_id/:assignment_id" element={role === "student" ? <StudentAssignmentPage1 /> : <TeacherAssignmentPage1 />} />
           </Routes>
         </Router>
-
       </AuthContext.Provider>
 
     </div>

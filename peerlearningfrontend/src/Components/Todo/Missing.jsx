@@ -11,7 +11,7 @@ const Missing=()=>{
     return (
         <>
             <div className="list">
-              <NavLink activeClassName='menu_active' className="nav-link anchorlink" to="/Assigned">Assigned</NavLink>
+              <NavLink activeClassName='menu_active' className="nav-link anchorlink" to="/Todo">Assigned</NavLink>
               <NavLink activeClassName='menu_active' className="nav-link anchorlink" to="/Missing">Missing</NavLink>
               <NavLink activeClassName='menu_active' className="nav-link anchorlink" to="/Done">Done</NavLink>
             </div>
