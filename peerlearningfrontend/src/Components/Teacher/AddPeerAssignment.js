@@ -66,7 +66,7 @@ const AddPeerAssignment = (props) => {
     if (name === "noOfQue") {
       const que = formInput.noOfQue;
       if (que < value) {
-        console.log("formInput.noOfQue"+formInput.noOfQue);
+        //console.log("formInput.noOfQue"+formInput.noOfQue);
         setQuestions(formInput.noOfQue);
         setOpenMarks(true);
         setMaxMarks((m) => [...m, 1]);
