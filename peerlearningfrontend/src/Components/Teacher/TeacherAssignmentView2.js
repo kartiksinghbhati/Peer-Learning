@@ -79,7 +79,6 @@ export default function TeacherAssignmentView2({ assg }) {
           })
             .then((res) => res.json())
             .then((res) => {
-                console.log(res.teachers);
                 var len = res.teachers.length;
                 for (var i = 0; i < len; i++) {
                     if (res.teachers[i].userId == assg.creatorUserId) {

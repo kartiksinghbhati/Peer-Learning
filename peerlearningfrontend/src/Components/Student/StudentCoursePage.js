@@ -23,8 +23,6 @@ const StudentCoursePage = () => {
   const { user, userData, course } = useContext(AuthContext);
 
   
-
-
   const loadData = async () =>{
     if (userData.token && course.id) {
       

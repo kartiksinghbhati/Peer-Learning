@@ -22,6 +22,20 @@ const StudentAssignmentPage2 = () => {
     const [spin1, setSpin1] = useState(true);
     const [spin2, setSpin2] = useState(true);
 
+    const currentDate = new Date();
+    // Specify your deadline year, month, day, hour, and minute values
+    const deadlineYear = assignment.dueDate.year;
+    const deadlineMonth = assignment.dueDate.month;
+    const deadlineDay = assignment.dueDate.day;
+    const deadlineHour = assignment.dueTime.hours;
+    const deadlineMinutes = assignment.dueTime.minutes;
+
+    // Create the deadline date objects
+    const deadlineDate = new Date(deadlineYear, deadlineMonth - 1, deadlineDay, deadlineHour, deadlineMinutes); // Subtract 1 from the month because it's zero-based
+    
+    // Compare the current date with the deadline date
+    const isDeadlinePassed = currentDate > deadlineDate;
+
 
     const loadData = async () =>{
         if (userData.token) {
@@ -92,26 +106,52 @@ const StudentAssignmentPage2 = () => {
         }        
     }, [role, assignment1._id, assignment1.status]);
 
-    console.log("SELF");
-    console.log(self);
-
-
+    
+  if(isDeadlinePassed){
+      return (
+          <>
+          {spin1 && spin2 ? <Spinner/>
+              :   <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities}/>
+          }
+          </>
+      );
+  }
+  else{
     return (
-        <>
-        {spin1 && spin2 ? <Spinner/>
-            :   <div className="dashboard">
-                    <div className="contain">
-                        {  role === "student" ?
-                                
-                                 assignment1.status === "Assigned" ? <StudentAssignmentView1 assg={assignment1}  self={self} activities={activities} marks={marks} setSelf={setSelf} setActivities={setActivities} />
-                                 : <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities}/>
-                            : null
-                        }
-                    </div>
-                </div>
-        }
-        </>
+      <>
+      {spin1 && spin2 ? <Spinner/>
+          :   <div className="dashboard">
+                  <div className="contain">
+                      {  role === "student" ?
+                              
+                               assignment1.status === "Assigned" ? <StudentAssignmentView1 assg={assignment1}  self={self} activities={activities} marks={marks} setSelf={setSelf} setActivities={setActivities} />
+                               : <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities}/>
+                          : null
+                      }
+                  </div>
+              </div>
+      }
+      </>
     );
+  }
+
+
+    // return (
+    //     <>
+    //     {spin1 && spin2 ? <Spinner/>
+    //         :   <div className="dashboard">
+    //                 <div className="contain">
+    //                     {  role === "student" ?
+                                
+    //                              assignment1.status === "Assigned" ? <StudentAssignmentView1 assg={assignment1}  self={self} activities={activities} marks={marks} setSelf={setSelf} setActivities={setActivities} />
+    //                              : <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities}/>
+    //                         : null
+    //                     }
+    //                 </div>
+    //             </div>
+    //     }
+    //     </>
+    // );
 };
 
 export default StudentAssignmentPage2;

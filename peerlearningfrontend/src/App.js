@@ -24,6 +24,7 @@ import Resolved from "./Components/Query/Resolved/Resolved";
 import TeacherDashboard from "./Components/Dashboard/Teacher1/TeacherDashboard";
 import TeacherDbCourse from "./Components/Dashboard/Teacher1/TeacherDbCourse";
 import TeacherDbAssignment from "./Components/Dashboard/Teacher1/TeacherDbAssignment";
+import Breadcrumb from "./Components/Breadcrumb/Breadcrumb";
 
 
 
@@ -50,6 +51,7 @@ function App() {
       <AuthContext.Provider value={{ user, setUser, userData, setUserData, course, setCourse, assignment, setAssignment, role, setRole, open, setOpen, message, setMessage }}>
         <Router>
           <ShowNavbar/>
+          {/* <Breadcrumb/> */}
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route exact path="/login" element={<Login />} />

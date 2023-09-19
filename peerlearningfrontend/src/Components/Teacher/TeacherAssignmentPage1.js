@@ -113,7 +113,7 @@ export default function TeacherAssignmentPage1() {
         return h + ":" + m + " " + t;
     }
     var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    console.log(assignment);
+    //console.log(assignment);
     return (
         <>
             {spin ? <Spinner /> :

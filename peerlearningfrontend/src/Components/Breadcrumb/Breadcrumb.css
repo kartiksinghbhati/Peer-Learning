@@ -1,0 +1,26 @@
+/* Breadcrumb container style */
+
+.breadcrumb-container {
+    position: fixed;
+    top: 62px; /* Adjust the top position as needed */
+    left: 0; /* Adjust the left position as needed */
+    right: 0; /* Adjust the right position as needed */
+    background-color: #f8f9fa; /* Background color */
+    padding: 4px;
+    padding-bottom: 0px;
+    border-radius: 4px;
+    z-index: 1000; /* Ensure it's above other content */
+    padding-left: 40px;
+  }
+  
+  /* Breadcrumb list items */
+  .breadcrumb-item {
+    display: inline;
+    margin-right: 5px; /* Adjust spacing between breadcrumb items */
+  }
+  
+  /* Active breadcrumb item style (last item) */
+  .breadcrumb-item.active {
+    color: #f8f9fa; /* Text color for active item */
+    font-weight: bold; /* Make active item bold */
+  }

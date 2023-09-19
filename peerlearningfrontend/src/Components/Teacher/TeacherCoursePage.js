@@ -4,6 +4,7 @@ import AuthContext from "../../AuthContext";
 import { G_API, API } from "../../config";
 import styles from './TeacherCoursePage.module.css';
 import PeerAssignmentCard from "../AssignmentCard/PeerAssignmentCard";
+import TeacherPeerAssignmentCard from "../AssignmentCard/TeacherPeerAssignmentCard";
 import AllAssignmentCard from '../AssignmentCard/AssignmentCard';
 import AddPeerAssignment from "./AddPeerAssignment";
 import Spinner from "../Spinner/Spinner";
@@ -108,6 +109,13 @@ const TeacherCoursePage = () => {
     }
 
     //console.log(peerAssignments);
+
+    const handleDeletePeerAssignment = (deletedAssignmentId) => {
+      // Remove the deleted assignment from the peerAssignments state
+      setPeerAssignments((prevPeerAssignments) =>
+        prevPeerAssignments.filter((assignment) => assignment._id !== deletedAssignmentId)
+      );
+    };
     
 
     return (
@@ -162,7 +170,7 @@ const TeacherCoursePage = () => {
                                     </div>
                                 ) : (<>
                                     {peerAssignments.slice().reverse().map((p, index) => (
-                                        <PeerAssignmentCard key={index} peerAssignments={p} ids={idArr} />
+                                        <TeacherPeerAssignmentCard key={p._id} peerAssignments={p} ids={idArr} onDelete={handleDeletePeerAssignment} />
                                     ))
                                     }
                                 </>)}

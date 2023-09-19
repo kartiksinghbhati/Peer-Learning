@@ -9,6 +9,7 @@ import Spinner from "../Spinner/Spinner";
 const TeacherAssignmentPage2 = () => {
 
     const { user, userData, setUserData, assignment, role } = useContext(AuthContext);
+    //console.log(assignment);
     const _id = assignment._id;
     const course_id = assignment.course_id;
 
@@ -22,6 +23,20 @@ const TeacherAssignmentPage2 = () => {
     const [spin1, setSpin1] = useState(true);
     const [spin2, setSpin2] = useState(true);
 
+
+    const currentDate = new Date();
+    // Specify your deadline year, month, day, hour, and minute values
+    const deadlineYear = assignment.dueDate.year;
+    const deadlineMonth = assignment.dueDate.month;
+    const deadlineDay = assignment.dueDate.day;
+    const deadlineHour = assignment.dueTime.hours;
+    const deadlineMinutes = assignment.dueTime.minutes;
+
+    // Create the deadline date objects
+    const deadlineDate = new Date(deadlineYear, deadlineMonth - 1, deadlineDay, deadlineHour, deadlineMinutes); // Subtract 1 from the month because it's zero-based
+    
+    // Compare the current date with the deadline date
+    const isDeadlinePassed = currentDate > deadlineDate;
 
 
     const loadData = async () =>{
@@ -57,8 +72,6 @@ const TeacherAssignmentPage2 = () => {
         await fetch(`${API}/api/peeractivity?peer_assignment_id=${_id}`) //for getting reviews and comments of students
             .then((res) => res.json())
             .then((res) => {
-            // console.log("res for getting reviews and comments");
-             console.log(res);
                 fetch(
                     `https://classroom.googleapis.com/v1/courses/${course_id}/students`, //gets the list of all students enrolled in the course
                     {
@@ -74,12 +87,10 @@ const TeacherAssignmentPage2 = () => {
                 
                 let a = [];
                 let authorMap = {};  //for storing the list of all students info with their id as key
-                //console.log(r.students);
+                
                 r.students.forEach((s) => {
                     authorMap[s.userId] = [s];
                 });
-
-                console.log(authorMap);
                 
                 res.forEach((activity) => {
                     if (authorMap[activity.author_id] !== undefined) {
@@ -131,21 +142,56 @@ const TeacherAssignmentPage2 = () => {
 
     useEffect(() => { getTeacherReviews(); }, [role, assignment1._id, assignment1.status]);
 
+    const stopPeerLearning = async () => {
+        try {
+            if (userData.token) {
+                await fetch(`${API}/api/closeassignment?peer_assignment_id=${_id}`, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                  body: JSON.stringify({
+                    peer_assignment_id: _id,
+                  }),
+                })
+                  .then((res) => res.json())
+                  .then((res) => {
+                      //alert("Peer Review Stoped");
+                  });
+              }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+    }
 
-    return (
-        <>
-        {spin1 && spin2 ? <Spinner/>
-            :   <div className="dashboard">
-                    <div className="contain">
-                        {  
-                            assignment1.status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount}/>
-                            : <TeacherAssignmentView2 assg={assignment1} /> 
-                        }
+
+    if(isDeadlinePassed){
+        stopPeerLearning();
+        return (
+            <>
+            {spin1 && spin2 ? <Spinner/>
+                :   <TeacherAssignmentView2 assg={assignment1} />
+            }
+            </>
+        );
+    }
+    else{
+        return (
+            <>
+            {spin1 && spin2 ? <Spinner/>
+                :   <div className="dashboard">
+                        <div className="contain">
+                            {  
+                                assignment1.status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount}/>
+                                : <TeacherAssignmentView2 assg={assignment1} /> 
+                            }
+                        </div>
                     </div>
-                </div>
-        }
-        </>
-    );
+            }
+            </>
+        );
+    }
 };
 
 export default TeacherAssignmentPage2;
