@@ -21,6 +21,7 @@ const addAssignmentScoreRouter = require('./routes/Teacher/add_assignment_score'
 const getAssignmentScoreRouter = require('./routes/Teacher/getAssignmentScore')
 const plotRouter = require('./routes/Analytics/Routes')
 const config = require('./config')
+const getyourReviewsRouter = require('./routes/Student/getyourReviews')
 
 require('dotenv').config()
 
@@ -64,6 +65,7 @@ app.use('/api/closeassignment', closeAssignmentRouter) // change status of the p
 app.use('/api/download', downloadRouter) // download score sheet (for Teachers)
 app.use('/api/logs', getLogsRouter) // download logs
 app.use('/api/reviews', getReviewsRouter) // get all reviews on the student dashboard
+app.use('/api/yourreviews', getyourReviewsRouter) // get student reviews given by you to others
 app.use('/api/deleteassignment', deleteAssignmentRouter) // delete given peer_assignment_id
 app.use('/api/addassignmentscore', addAssignmentScoreRouter) // add assignment score for giver user_id
 app.use('/api/assignmentscore', getAssignmentScoreRouter) // get assignment score for given assignment_id
