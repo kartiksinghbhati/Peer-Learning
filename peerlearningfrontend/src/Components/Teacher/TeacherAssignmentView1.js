@@ -9,183 +9,161 @@ import bottom from "../Images/Bottom.png";
 import styles from "./TeacherAssignmentView1.module.css";
 import { ScoreCard } from "./ScoreCard";
 import Spinner from "../Spinner/Spinner";
+import StopPeerLearningPopup from "../Popups/StopPeerLearningPopup";
 //import { PieChart, Pie } from 'recharts';
 
 function conversion(hours, minutes) {
-    var t;
-    var h = hours + 5;
-    var m = minutes + 30;
-    if (m >= 60) {
-        h = h + 1;
-        m = 60 - m;
+  var t;
+  var h = hours + 5;
+  var m = minutes + 30;
+  if (m >= 60) {
+    h = h + 1;
+    m = 60 - m;
+  }
+  if (m < 10) {
+    m = "0" + m;
+  }
+  if (h >= 24)
+    h = h - 24;
+  if (h >= 12) {
+    t = 'PM';
+    if (h > 12)
+      h = h - 12;
+  }
+  else {
+    t = 'AM';
+    if (h < 10) {
+      h = "0" + h;
     }
-    if (m < 10) {
-        m = "0" + m;
-    }
-    if (h >= 24)
-        h = h - 24;
-    if (h >= 12) {
-        t = 'PM';
-        if (h > 12)
-            h = h - 12;
-    }
-    else {
-        t = 'AM';
-        if (h < 10) {
-            h = "0" + h;
-        }
-    }
-    return h + ":" + m + " " + t;
+  }
+  return h + ":" + m + " " + t;
 }
 function none(hours) {
-    var t;
-    var h = hours + 5;
-    var m = 30;
-    if (h >= 24)
-        h = h - 24;
-    if (h >= 12) {
-        t = 'PM';
-        if (h > 12)
-            h = h - 12;
+  var t;
+  var h = hours + 5;
+  var m = 30;
+  if (h >= 24)
+    h = h - 24;
+  if (h >= 12) {
+    t = 'PM';
+    if (h > 12)
+      h = h - 12;
+  }
+  else {
+    t = 'AM';
+    if (h < 10) {
+      h = "0" + h;
     }
-    else {
-        t = 'AM';
-        if (h < 10) {
-            h = "0" + h;
-        }
-    }
-    return h + ":" + m + " " + t;
+  }
+  return h + ":" + m + " " + t;
 }
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount }) {
-    // console.log(assg);
-    // console.log(activities);
-    // console.log(marks);
-    // console.log(reviewerCount);
+export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount, stopPeerLearning }) {
+  // console.log(assg);
+  // console.log(activities);
+  // console.log(marks);
+  // console.log(reviewerCount);
 
-    const { userData, assignment } = useContext(AuthContext);
-    const _id = assignment._id;
+  const { userData, assignment } = useContext(AuthContext);
+  const _id = assignment._id;
 
-    var i = 200;
-    var j = 1000;
-    const data = [
-        { name: 'Completed', students: i, fill: "rgba(75, 192, 192, 0.2)" },
-        { name: 'In-Progress', students: 200, fill: "rgba(255, 206, 86, 0.3)" },
-        { name: 'Not-Started', students: j, fill: "rgba(255, 99, 132, 0.4)" },
-    ];
-    const [TeacherName, setTeacherName] = useState([]);
-    const [spin, setspin] = useState(true);
+  var i = 200;
+  var j = 1000;
+  const data = [
+    { name: 'Completed', students: i, fill: "rgba(75, 192, 192, 0.2)" },
+    { name: 'In-Progress', students: 200, fill: "rgba(255, 206, 86, 0.3)" },
+    { name: 'Not-Started', students: j, fill: "rgba(255, 99, 132, 0.4)" },
+  ];
+  const [TeacherName, setTeacherName] = useState([]);
+  const [spin, setspin] = useState(true);
+  const [showStopConfirmation, setShowStopConfirmation] = useState(false);
 
-    const truncate = (str) => {
-        if (str) {
-          return str.length > 60 ? str.substring(0, 59) + "..." : str;
-        }
+  const truncate = (str) => {
+    if (str) {
+      return str.length > 60 ? str.substring(0, 59) + "..." : str;
     }
-      
-    const loadData = async () =>{
+  }
 
-        if (userData.token) {
-          await fetch(`${G_API}/courses/${assg.courseId}/teachers`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${userData.token}`,
-            },
-          })
-            .then((res) => res.json())
-            .then((res) => {
-                // console.log(res.teachers);
-                var len = res.teachers.length;
-                for (var i = 0; i < len; i++) {
-                    if (res.teachers[i].userId == assg.creatorUserId) {
-                        var g = i;
-                    }
-                }
-                setTeacherName(res.teachers[g].profile.name.fullName);
-                setspin(false);
-            });
-        }
-    }
+  const loadData = async () => {
 
-    useEffect(() => { loadData() }, [userData.token]);
-
-    const stopPeerLearning = async () => {
-        //assg.status = "NotAssigned";
-
-        try {
-            if (userData.token) {
-                await fetch(`${API}/api/closeassignment?peer_assignment_id=${_id}`, {
-                method: "POST",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                  body: JSON.stringify({
-                    peer_assignment_id: _id,
-                  }),
-                })
-                  .then((res) => res.json())
-                  .then((res) => {
-                      alert("Peer Review Stoped");
-                  });
-              }
-          } catch (error) {
-            console.error('Error:', error);
+    if (userData.token) {
+      await fetch(`${G_API}/courses/${assg.courseId}/teachers`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${userData.token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          // console.log(res.teachers);
+          var len = res.teachers.length;
+          for (var i = 0; i < len; i++) {
+            if (res.teachers[i].userId == assg.creatorUserId) {
+              var g = i;
+            }
           }
+          setTeacherName(res.teachers[g].profile.name.fullName);
+          setspin(false);
+        });
     }
+  }
 
-    return (
-        <>
-            {spin ? <Spinner /> :
-                <div>
-                    <div className={styles.mainDiv}>
-                        <div className={styles.contentDiv}>
-                            <div>
-                                <AssignmentIcon className={styles.AssgIcon} />
-                            </div>
-                            <div className={styles.midDiv}>
-                                <h4 className={styles.AssgnName}>{truncate(assg.assignment_title)}</h4>
-                                <p className={styles.teacher}>{TeacherName} <span className={styles.dot}>.</span> {month[(assg.creationTime.substring(5, 7)) - 1]} {assg.creationTime.substring(8, 10)}</p>
-                                <div className={styles.pointsanddue}>
-                                    {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Ungraded</p>}
-                                    <div className={styles.duediv}>
-                                        {assg.dueDate ? <p className={styles.due}>Due {assg.dueDate.day}/{assg.dueDate.month}/{assg.dueDate.year}, {assg.dueTime.minutes ? conversion(assg.dueTime.hours, assg.dueTime.minutes) : none(assg.dueTime.hours)} </p> : <p className={styles.due}>No Due Date</p>}
-                                    </div>
-                                </div>
-                                <Line className={styles.line} />
-                                <p className={styles.AssignmentSubtitle}>{assg.description}</p>
-                                {assg.materials ?
-                                    <a href={assg.materials[0].driveFile.driveFile.alternateLink}>
-                                        <div className={styles.uploadDoc}>
-                                            <img id={styles.thumbnail1} src={assg.materials[0].driveFile.driveFile.thumbnailUrl} />
-                                            <div id={styles.written}>
-                                                <p id={styles.ques}>{assg.materials[0].driveFile.driveFile.title}</p>
-                                                <p id={styles.type}>PDF</p>
-                                            </div>
-                                        </div>
-                                    </a> :
-                                    <div className={styles.uploadDoc}>
-                                        <img id={styles.thumbnail1} src={thumbnail} />
-                                        <div id={styles.written}>
-                                            <p id={styles.ques}>No Question Paper Uploaded</p>
-                                            {/* <p id={styles.type}>PDF</p> */}
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                            <div className={styles.moreIcon}>
-                                <MoreIcon />
-                            </div>
-                        </div>
-                        <div className={styles.pdfDiv}>
-                            <button className={styles.btn1}>Check for Abnormalities </button>
-                            <button className={styles.btn2}>View student Reviews</button>
-                            <button className={styles.btn3} onClick={stopPeerLearning}>Stop Peer Learning </button>
-                            <button className={styles.btn4}>View detailed Analytics </button>
-                        </div>
+  useEffect(() => { loadData() }, [userData.token]);
+
+  return (
+    <>
+      {spin ? <Spinner /> :
+        <div>
+          <div className={styles.mainDiv}>
+            <div className={styles.contentDiv}>
+              <div>
+                <AssignmentIcon className={styles.AssgIcon} />
+              </div>
+              <div className={styles.midDiv}>
+                <h4 className={styles.AssgnName}>{truncate(assg.assignment_title)}</h4>
+                <p className={styles.teacher}>{TeacherName} <span className={styles.dot}>.</span> {month[(assg.creationTime.substring(5, 7)) - 1]} {assg.creationTime.substring(8, 10)}</p>
+                <div className={styles.pointsanddue}>
+                  {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Ungraded</p>}
+                  <div className={styles.duediv}>
+                    {assg.dueDate ? <p className={styles.due}>Due {assg.dueDate.day}/{assg.dueDate.month}/{assg.dueDate.year}, {assg.dueTime.minutes ? conversion(assg.dueTime.hours, assg.dueTime.minutes) : none(assg.dueTime.hours)} </p> : <p className={styles.due}>No Due Date</p>}
+                  </div>
+                </div>
+                <Line className={styles.line} />
+                <p className={styles.AssignmentSubtitle}>{assg.description}</p>
+                {assg.materials ?
+                  <a href={assg.materials[0].driveFile.driveFile.alternateLink}>
+                    <div className={styles.uploadDoc}>
+                      <img id={styles.thumbnail1} src={assg.materials[0].driveFile.driveFile.thumbnailUrl} />
+                      <div id={styles.written}>
+                        <p id={styles.ques}>{assg.materials[0].driveFile.driveFile.title}</p>
+                        <p id={styles.type}>PDF</p>
+                      </div>
                     </div>
-                    <p className={styles.completeprogress}>Completion Progress</p>
-                    {/* <PieChart width={600} height={350}>
+                  </a> :
+                  <div className={styles.uploadDoc}>
+                    <img id={styles.thumbnail1} src={thumbnail} />
+                    <div id={styles.written}>
+                      <p id={styles.ques}>No Question Paper Uploaded</p>
+                      {/* <p id={styles.type}>PDF</p> */}
+                    </div>
+                  </div>
+                }
+              </div>
+              {/* <div className={styles.moreIcon}>
+                                <MoreIcon />
+                            </div> */}
+            </div>
+            <div className={styles.pdfDiv}>
+              <button className={styles.btn1}>Check for Abnormalities </button>
+              <button className={styles.btn2}>View student Reviews</button>
+              <button className={styles.btn3} onClick={() => setShowStopConfirmation(true)}>Stop Peer Learning </button>
+              <button className={styles.btn4}>View detailed Analytics </button>
+            </div>
+          </div>
+          <p className={styles.completeprogress}>Completion Progress</p>
+
+          {/* <PieChart width={600} height={350}>
                         <Pie
                             data={data}
                             cx="50%"
@@ -224,6 +202,74 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                         />
                     </PieChart> */}
                     {activities.length > 0 && assg.status !== "Added" && (
+            <>
+              <p
+                style={{
+                  padding: "8px 0px 5px 20px",
+                  marginLeft: "-10px",
+                  fontSize: "20px",
+                  color: "#8AB6D6",
+                  marginTop: "100px",
+                }}
+              >
+                Student Submissions
+              </p>
+              <table className={styles.studentList}>
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    {Array(reviewerCount)
+                      .fill(0)
+                      .map((_, i) => (
+                        <th key={`reviewer-${i}`}>Reviewer {i + 1}</th>
+                      ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {activities.map((row) => (
+                    <tr key={row.name}>
+                      <td>
+                        {row[0].profile.name.fullName}
+                      </td>
+                      {
+                      row.slice(1).map((r) => {
+                        const isDataEmpty = r.review_score.length === 0;
+                      
+                        // Define a class name based on the condition
+                        const tdClassName = isDataEmpty ? styles.emptyScore : styles.nonEmptyScore;
+                      
+                        return (
+                          <td key={r.name.fullName}>
+                            {/* {console.log(assg.total_questions)} */}
+                            <ScoreCard data={r} questions={assg.total_questions}>
+                              
+                              <div className={tdClassName}>{r.name.fullName}</div>
+                            </ScoreCard>
+                          </td>
+                        );
+                      })
+                      }
+                      {row.length === 1 && (
+                        <>
+                          {Array(reviewerCount)
+                            .fill(0)
+                            .map((_, i) => (
+                              <td
+                                key={`no-submission-${i}`}
+                                className={styles.noSubmission}
+                              >
+                                No Submission
+                              </td>
+                            ))}
+                        </>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+          {/* {activities.length > 0 && assg.status !== "Added" && (
                         <>
                             <p style={{ padding: "8px 0px 5px 20px", marginLeft: "-10px", fontSize: "20px", color: "#8AB6D6", marginTop: "100px" }}>Student Submissions</p>
                             <table className="reviewers" style={{ width: "90%", backgroundColor: "white", marginLeft: "10px" }}>
@@ -267,9 +313,91 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                                 </tbody>
                             </table>
                         </>
-                    )}
-                </div>}
-            {<img src={bottom} alt="Image" className={styles.bottom} />}
-        </>
-    );
+                    )} */}
+        </div>}
+      {<img src={bottom} alt="Image" className={styles.bottom} />}
+
+      <StopPeerLearningPopup stopPeerLearning={stopPeerLearning} showStopConfirmation={showStopConfirmation} setShowStopConfirmation={setShowStopConfirmation} />
+    </>
+  );
 }
+
+
+
+
+
+
+
+
+
+
+
+          // {activities.length > 0 && assg.status !== "Added" && (
+          //   <>
+          //     <p
+          //       style={{
+          //         padding: "8px 0px 5px 20px",
+          //         marginLeft: "-10px",
+          //         fontSize: "20px",
+          //         color: "#8AB6D6",
+          //         marginTop: "100px",
+          //       }}
+          //     >
+          //       Student Submissions
+          //     </p>
+          //     <table className={styles.studentList}>
+          //       <thead>
+          //         <tr>
+          //           <th>Student Name</th>
+          //           {Array(reviewerCount)
+          //             .fill(0)
+          //             .map((_, i) => (
+          //               <th key={`reviewer-${i}`}>Reviewer {i + 1}</th>
+          //             ))}
+          //         </tr>
+          //       </thead>
+          //       <tbody>
+          //         {activities.map((row) => (
+          //           <tr key={row.name}>
+          //             <td>
+          //               {row[0].profile.name.fullName}
+          //             </td>
+          //             {
+          //             row.slice(1).map((r) => {
+          //               const isDataEmpty = r.review_score.length === 0;
+                      
+          //               // Define a class name based on the condition
+          //               const tdClassName = isDataEmpty ? styles.emptyScore : styles.nonEmptyScore;
+                      
+          //               return (
+          //                 <td key={r.name.fullName}>
+          //                   {console.log(assg.total_questions)}
+          //                   <ScoreCard data={r} questions={assg.total_questions}>
+                              
+          //                     <div className={tdClassName}>{r.name.fullName}</div>
+          //                   </ScoreCard>
+          //                 </td>
+          //               );
+          //             })
+          //             }
+          //             {row.length === 1 && (
+          //               <>
+          //                 {Array(reviewerCount)
+          //                   .fill(0)
+          //                   .map((_, i) => (
+          //                     <td
+          //                       key={`no-submission-${i}`}
+          //                       className={styles.noSubmission}
+          //                     >
+          //                       No Submission
+          //                     </td>
+          //                   ))}
+          //               </>
+          //             )}
+          //           </tr>
+          //         ))}
+          //       </tbody>
+          //     </table>
+          //   </>
+          // )}
+        

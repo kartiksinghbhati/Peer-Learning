@@ -9,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
+
 const AddPeerAssignment = (props) => {
 
   const { user, userData, course, setOpen, setMessage } = useContext(AuthContext);
@@ -28,6 +29,20 @@ const AddPeerAssignment = (props) => {
     modelAns: ""
   })
 
+  const [modelAnswerSheet, setModelAnswerSheet] = useState(null);
+  const [openModelAnswerDialog, setOpenModelAnswerDialog] = useState(false);
+  const handleModelAnswerDialogOpen = () => {
+    setOpenModelAnswerDialog(true);
+  };
+
+  const handleModelAnswerDialogClose = () => {
+    setOpenModelAnswerDialog(false);
+  };
+  const [modelAnswerSheetUrl, setModelAnswerSheetUrl] = useState(""); // Add this state variable
+
+
+
+
 
   const OnClickOpen = () => {
     setOpenDialog(true);
@@ -44,7 +59,19 @@ const AddPeerAssignment = (props) => {
   };
 
   const handleAssignmentChange = (s) => {
+
+    const selectedTitle = s ? s.title : '';
+
+    // Update the filename in the formInput state
+    setFormInput({
+      ...formInput,
+      chosenAssignment: s,
+      modelAns: selectedTitle, // Set the filename based on the selected title
+    });
+
+    // Update the assignment in the state
     setAssignment(s);
+
   };
 
   const handleFormSubmit = (e) => {
@@ -127,6 +154,7 @@ const AddPeerAssignment = (props) => {
             total_questions: questions,
             max_marks_per_question: maxMarks,
             access_token: userData.token,
+            modelAnswerSheetUrl: modelAnswerSheetUrl, // Include the modelAnswerSheetUrl
           }),
         }
       )
@@ -183,6 +211,88 @@ const AddPeerAssignment = (props) => {
         });
     }
   };
+
+  const handleModelAnswerUpload = async () => {
+    //console.log(modelAnswerSheet);
+    if (modelAnswerSheet) {
+      const formData = new FormData();
+      formData.append('modelAnswerSheet', modelAnswerSheet);
+      console.log(modelAnswerSheet);
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      try {
+        const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${userData.token}`, // Use the user's access token
+            'Content-Type': 'application/pdf',
+            //'Content-Disposition': 'inline; filename="desired-file-name.pdf"', // Specify the desired filename
+            //'Slug': 'desired-file-name.pdf',
+          },
+          body: formData,
+        });
+
+        if (response.ok) {
+          // Handle successful upload
+          // You can add code here to store the file information or do any other necessary actions.
+          // Close the upload dialog
+          const fileMetadata = await response.json();
+          // Now, update the uploaded file's name using a separate request
+          const fileId = fileMetadata.id;
+          const newFileName = formInput.modelAns; // Set your desired filename here
+          const renameResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?uploadType=media`, {
+            method: 'PATCH',
+            headers: {
+              Authorization: `Bearer ${userData.token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newFileName }),
+          });
+
+          if (renameResponse.ok) {
+            // Handle successful filename update
+            handleModelAnswerDialogClose();
+            console.log('File renamed successfully.');
+          } else {
+            // Handle error when updating filename
+            console.error('Error renaming file: ' + renameResponse.status);
+          }
+          const fileUrl = `https://drive.google.com/file/d/${fileId}/view`;
+
+          // Set the URL to the state variable
+          setModelAnswerSheetUrl(fileUrl);
+          console.log(fileUrl);
+          const shareResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${userData.token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              role: 'reader', // Grants read-only access
+              type: 'anyone', // Allows anyone with the link to access
+            }),
+          });
+
+          if (shareResponse.ok) {
+            console.log('File sharing permissions updated successfully.');
+          } else {
+            console.error('Error updating file sharing permissions: ' + shareResponse.status);
+          }
+
+        } else {
+          // Handle error
+          console.error('Error uploading Model Answer Sheet: ' + response.status);
+        }
+      } catch (error) {
+        console.error('Error uploading Model Answer Sheet', error);
+      }
+    }
+  };
+
+
 
 
   return (
@@ -246,7 +356,6 @@ const AddPeerAssignment = (props) => {
               </div>
             ))}
 
-
             <div style={{ margin: "20px" }}>
               <p>Reviewers Per Sheet:</p>
               <div style={{ marginTop: "-41px", marginLeft: "180px" }}>
@@ -276,6 +385,41 @@ const AddPeerAssignment = (props) => {
                 />
               </div>
             </div>
+            <div>
+              <Button
+                onClick={handleModelAnswerDialogOpen}
+                color="primary"
+                variant="outlined"
+              >
+                Upload Model Answer Sheet (PDF)
+              </Button>
+              <Dialog
+                open={openModelAnswerDialog}
+                onClose={handleModelAnswerDialogClose}
+                aria-labelledby="form-dialog-title"
+              >
+                <DialogTitle id="form-dialog-title">
+                  Upload Model Answer Sheet (PDF)
+                </DialogTitle>
+                <DialogContent>
+                  {/* Add file input to allow the user to choose a PDF file */}
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => setModelAnswerSheet(e.target.files[0])}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleModelAnswerDialogClose} color="primary">
+                    Cancel
+                  </Button>
+                  <Button onClick={handleModelAnswerUpload} color="primary">
+                    Upload
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+            </div>
             <DialogActions>
               <Button onClick={handleClose} color="primary">
                 Cancel{" "}
@@ -297,7 +441,6 @@ export default AddPeerAssignment
 
 
 
-
 // import React, { useState, useContext } from 'react'
 // import AuthContext from "../../AuthContext";
 // import { API } from "../../config";
@@ -311,7 +454,7 @@ export default AddPeerAssignment
 
 // const AddPeerAssignment = (props) => {
 
-//     const { user, userData, course, setOpen, setMessage } = useContext(AuthContext);
+//   const { user, userData, course, setOpen, setMessage } = useContext(AuthContext);
 
 //   const [assignment, setAssignment] = useState({}); //for choosing an assignment while adding an assignment to peer learning
 //   const [questions, setQuestions] = useState(0); //for setting no. of questions for an assignment
@@ -327,7 +470,7 @@ export default AddPeerAssignment
 //     reviewerDeadline: "",
 //     modelAns: ""
 //   })
-  
+
 
 //   const OnClickOpen = () => {
 //     setOpenDialog(true);
@@ -352,7 +495,7 @@ export default AddPeerAssignment
 //     addPeerLearning();
 //     handleClose();
 //   };
-  
+
 //   const handleMaxMarksChange = (index, value) => {
 //     let k = maxMarks;
 //     k[index] = Math.max(0, Number(value));
@@ -373,7 +516,7 @@ export default AddPeerAssignment
 
 //       }
 //       if (que > value) {
-//         console.log("questions"+questions);
+//         console.log("questions" + questions);
 //         setQuestions(questions - 1);
 //         maxMarks.pop();
 //         setMaxMarks(maxMarks);
@@ -413,7 +556,7 @@ export default AddPeerAssignment
 //       // console.log(course.id, assignment.id, userData.user.email, questions, maxMarks);
 //       //setUserData({ ...userData, loader: 1 });
 //       fetch(
-//         `${API}/api/assignment/add?course_id=${course.id}&assignment_id=${assignment.id}&owner=${user.email}&total_questions=${questions}&access_token=${userData.token}`,
+//         `${API}/api/assignment/add?course_id=${course.id}&assignment_id=${assignment.id}&owner=${user.email}&max_marks_per_question=${maxMarks}&total_questions=${questions}&access_token=${userData.token}`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -474,7 +617,7 @@ export default AddPeerAssignment
 //                 }
 //               });
 //             });
-          
+
 //         })
 //         .catch((err) => {
 //           console.log(err);
@@ -486,128 +629,114 @@ export default AddPeerAssignment
 
 
 //   return (
-//       <div>
-//         <Button variant="outlined" style={{color: "#1E4FA0", borderRadius: "15px", backgroundColor: "white", marginTop: "0px", marginLeft: "50%",}} onClick={OnClickOpen}>
-//           <AddCircleIcon style={{ color: "#1E4FA0", marginRight: "20px", marginLeft: "40px", textAlign: "center",}}/>
-//             {" "}
-//             Add New Peer Assignment
-//         </Button>
+//     <div>
+//       <Button variant="outlined" style={{ color: "#1E4FA0", borderRadius: "15px", backgroundColor: "white", marginTop: "0px", marginLeft: "50%", }} onClick={OnClickOpen}>
+//         <AddCircleIcon style={{ color: "#1E4FA0", marginRight: "20px", marginLeft: "40px", textAlign: "center", }} />
+//         {" "}
+//         Add New Peer Assignment
+//       </Button>
 
 
-//         <Dialog open={openDialog} onClose={handleClose} aria-labelledby="form-dialog-title">
-//           <DialogTitle id="form-dialog-title">
-//             Create New Assignment
-//           </DialogTitle>
+//       <Dialog open={openDialog} onClose={handleClose} aria-labelledby="form-dialog-title">
+//         <DialogTitle id="form-dialog-title">
+//           Create New Assignment
+//         </DialogTitle>
 
-//           <DialogContent style={{ height: "270px", marginTop: "10px" }}>
-//             <p>Choose An Assignment:</p>
-//             <div
-//               style={{width: "200px", height: "50px", marginTop: "-45px", marginLeft: "200px",}}>
+//         <DialogContent style={{ height: "270px", marginTop: "10px" }}>
+//           <p>Choose An Assignment:</p>
+//           <div
+//             style={{ width: "200px", height: "50px", marginTop: "-45px", marginLeft: "200px", }}>
 
-//               <Select
-//                 value={assignment} /**** */
-//                 options={props.allAssignments}  /****** */
-//                 getOptionLabel={(option) => option.title} /**** */
-//                 getOptionValue={(option) => option.id} /**** */
-//                 onChange={handleAssignmentChange}
-//                 rules={{ required: "Please select an option" }}
-//               />
+//             <Select
+//               value={assignment} /**** */
+//               options={props.allAssignments}  /****** */
+//               getOptionLabel={(option) => option.title} /**** */
+//               getOptionValue={(option) => option.id} /**** */
+//               onChange={handleAssignmentChange}
+//               rules={{ required: "Please select an option" }}
+//             />
+//           </div>
+
+//           <form action="" onSubmit={handleFormSubmit}>
+//             <div style={{ margin: "10px" }}>
+//               <p style={{ marginLeft: "31px" }}>No. of Questions:</p>
+//               <div style={{ marginTop: "-43px", marginLeft: "190px" }}>
+//                 <input
+//                   style={{ width: "60px" }}
+//                   type="number"
+//                   name="noOfQue"
+//                   min="0"
+//                   value={formInput.noOfQue}
+//                   onChange={handleInput}
+//                   required
+//                 />
+//               </div>
 //             </div>
-
-//             <form action="" onSubmit={handleFormSubmit}>
-//               <div style={{ margin: "10px" }}>
-//                 <p style={{ marginLeft: "31px" }}>No. of Questions:</p>
+//             {Array.from({ length: formInput.noOfQue }, (_, index) => (
+//               <div key={index} style={{ margin: "10px" }}>
+//                 <p>Max Marks for Question {index + 1}:</p>
 //                 <div style={{ marginTop: "-43px", marginLeft: "190px" }}>
 //                   <input
 //                     style={{ width: "60px" }}
 //                     type="number"
-//                     name="noOfQue"
 //                     min="0"
-//                     value={formInput.noOfQue} /**** */
-//                     onChange={handleInput}
-//                     required
-//                   />
-//                 </div>
-//                 {maxMarks.map((m, index) => ( /**** */
-//                   <Dialog
-//                     open={openMarks} /**** */
-//                     onClose={handleMarksClose} 
-//                     aria-labelledby="form-dialog-title"
-//                   >
-//                     <DialogTitle id="form-dialog-title">
-//                       Enter Marks
-//                     </DialogTitle>
-//                     <DialogContent>
-//                       <input
-//                         style={{ width: "60px" }}
-//                         type="number"
-//                         min="0"
-//                         name="noOfQue"
-//                         value={m}
-//                         onChange={(e) => {
-//                           handleMaxMarksChange(index, e.target.value); 
-//                         }}
-//                         required
-//                       />
-//                     </DialogContent>
-//                     <DialogActions>
-//                       <Button onClick={handleMarksClose} color="primary">
-//                         {" "}
-//                         Cancel{" "}
-//                       </Button>
-//                       <Button onClick={handleMarksSubmit}  color="primary">
-//                         {" "}
-//                         Set Marks{" "}
-//                       </Button>
-//                     </DialogActions>
-//                   </Dialog>
-//                 ))}
-//               </div>
-//               <div style={{ margin: "20px" }}>
-//                 <p>Reviewers Per Sheet:</p>
-//                 <div style={{ marginTop: "-41px", marginLeft: "180px" }}>
-//                   <input
-//                     style={{ width: "60px" }}
-//                     type="number"
-//                     name="reviewersPerSheet"
-//                     min="0"
-//                     value={formInput.reviewersPerSheet} /**** */
-//                     onChange={handleInput} 
+//                     name={`maxMarks[${index}]`}
+//                     value={maxMarks[index]}
+//                     onChange={(e) => handleMaxMarksChange(index, e.target.value)}
 //                     required
 //                   />
 //                 </div>
 //               </div>
-//               <div style={{ margin: "15px" }}>
-//                 <p style={{ marginLeft: "28px" }}>Review Deadline:</p>
-//                 <div style={{ marginTop: "-40px", marginLeft: "185px" }}>
-//                   <input
-//                     style={{ width: "200px" }}
-//                     type="datetime-local"
-//                     InputLabelProps={{
-//                       shrink: true,
-//                     }}
-//                     name="reviewerDeadline"
-//                     value={formInput.reviewerDeadline} /**** */
-//                     onChange={handleInput}
-//                   />
-//                 </div>
-//               </div>
-//               <DialogActions>
-//                 <Button onClick={handleClose} color="primary">
-//                   Cancel{" "}
-//                 </Button>
-//                 <Button type="submit" color="primary">
-//                   {" "}
-//                   Add Assignment{" "}
-//                 </Button>
-//               </DialogActions>
-//             </form>
-//           </DialogContent>
+//             ))}
 
-//         </Dialog>
-//       </div>
+
+//             <div style={{ margin: "20px" }}>
+//               <p>Reviewers Per Sheet:</p>
+//               <div style={{ marginTop: "-41px", marginLeft: "180px" }}>
+//                 <input
+//                   style={{ width: "60px" }}
+//                   type="number"
+//                   name="reviewersPerSheet"
+//                   min="0"
+//                   value={formInput.reviewersPerSheet} /**** */
+//                   onChange={handleInput}
+//                   required
+//                 />
+//               </div>
+//             </div>
+//             <div style={{ margin: "15px" }}>
+//               <p style={{ marginLeft: "28px" }}>Review Deadline:</p>
+//               <div style={{ marginTop: "-40px", marginLeft: "185px" }}>
+//                 <input
+//                   style={{ width: "200px" }}
+//                   type="datetime-local"
+//                   InputLabelProps={{
+//                     shrink: true,
+//                   }}
+//                   name="reviewerDeadline"
+//                   value={formInput.reviewerDeadline} /**** */
+//                   onChange={handleInput}
+//                 />
+//               </div>
+//             </div>
+//             <DialogActions>
+//               <Button onClick={handleClose} color="primary">
+//                 Cancel{" "}
+//               </Button>
+//               <Button type="submit" color="primary">
+//                 {" "}
+//                 Add Assignment{" "}
+//               </Button>
+//             </DialogActions>
+//           </form>
+//         </DialogContent>
+
+//       </Dialog >
+//     </div >
 //   );
 // }
 
 // export default AddPeerAssignment
+
+
 

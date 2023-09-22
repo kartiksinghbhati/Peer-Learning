@@ -152,9 +152,9 @@ export default function TeacherAssignmentPage1() {
                                 </div>
                             }
                         </div>
-                        <div className={styles.moreIcon}>
+                        {/* <div className={styles.moreIcon}>
                             <MoreIcon />
-                        </div>
+                        </div> */}
                     </div>
                     <div className={styles.pdfDiv}>
                         {/* <a href={assignment.assignment.studentWorkFolder.alternateLink} target="_blank">

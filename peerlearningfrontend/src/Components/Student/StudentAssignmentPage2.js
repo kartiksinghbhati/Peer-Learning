@@ -21,6 +21,7 @@ const StudentAssignmentPage2 = () => {
     const [marks, setMarks] = useState([]); //for storing marks matrix
     const [spin1, setSpin1] = useState(true);
     const [spin2, setSpin2] = useState(true);
+    const [youractivities, setyourActivities] = useState([]);
 
     const currentDate = new Date();
     // Specify your deadline year, month, day, hour, and minute values
@@ -95,6 +96,13 @@ const StudentAssignmentPage2 = () => {
             setSpin2(false);
             //setUserData((u) => ({ ...u, loader: u.loader - 1 }));
           });
+        await fetch(`${API}/api/yourreviews?peer_assignment_id=${_id}&student_id=${user.sub}`)
+          .then((res) => res.json())
+          .then((res) => {
+            setyourActivities(res);
+            //console.log(res);
+            setSpin2(false);
+      });
     }; 
 
     useEffect(() => { 
@@ -106,12 +114,37 @@ const StudentAssignmentPage2 = () => {
         }        
     }, [role, assignment1._id, assignment1.status]);
 
+
+    const stopPeerLearning = async () => {
+      try {
+          if (userData.token) {
+              await fetch(`${API}/api/closeassignment?peer_assignment_id=${_id}`, {
+              method: "POST",
+              headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+              },
+                body: JSON.stringify({
+                  peer_assignment_id: _id,
+                }),
+              })
+                .then((res) => res.json())
+                .then((res) => {
+                    //alert("Peer Review Stoped");
+                });
+            }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+  }
+
     
   if(isDeadlinePassed){
+    stopPeerLearning();
       return (
           <>
           {spin1 && spin2 ? <Spinner/>
-              :   <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities}/>
+              :   <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities} youractivities={youractivities} setyourActivities={setyourActivities}/>
           }
           </>
       );
@@ -125,7 +158,7 @@ const StudentAssignmentPage2 = () => {
                       {  role === "student" ?
                               
                                assignment1.status === "Assigned" ? <StudentAssignmentView1 assg={assignment1}  self={self} activities={activities} marks={marks} setSelf={setSelf} setActivities={setActivities} />
-                               : <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities}/>
+                               : <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities} youractivities={youractivities} setyourActivities={setyourActivities}/>
                           : null
                       }
                   </div>

@@ -5,8 +5,8 @@ export const ScoreCard = (props) => {
   return (
     <div
       className="link-with-preview"
-      onMouseEnter={() => setIsShown(true)}
-      onMouseLeave={() => setIsShown(false)}
+      onClick={() => setIsShown(!isShown)} // Toggle the state on click
+      style={{ cursor: 'pointer' }} // Apply the cursor style
     >
       <span> {props.children} </span>
       {isShown && <Card data={props.data} questions={props.questions} />}
@@ -50,3 +50,10 @@ const Card = (props) => {
     </div>
   );
 };
+
+
+    // <div
+    //   className="link-with-preview"
+    //   onMouseEnter={() => setIsShown(true)}
+    //   onMouseLeave={() => setIsShown(false)}
+    // >

@@ -10,6 +10,7 @@ const TeacherAssignmentPage2 = () => {
 
     const { user, userData, setUserData, assignment, role } = useContext(AuthContext);
     //console.log(assignment);
+
     const _id = assignment._id;
     const course_id = assignment.course_id;
 
@@ -22,6 +23,7 @@ const TeacherAssignmentPage2 = () => {
     const [marks, setMarks] = useState([]); //for storing marks matrix
     const [spin1, setSpin1] = useState(true);
     const [spin2, setSpin2] = useState(true);
+    const [status, setStatus] = useState("");
 
 
     const currentDate = new Date();
@@ -46,6 +48,7 @@ const TeacherAssignmentPage2 = () => {
               .then((res) => res.json())
               .then(async (res) => {
                 //console.log(res);
+                setStatus(res.status);
                 await fetch(
                   `${G_API}/courses/${course_id}/courseWork/${res.assignment_id}`,
                   {
@@ -57,6 +60,7 @@ const TeacherAssignmentPage2 = () => {
                 )
                   .then((r) => r.json())
                   .then((r) => {
+                    //console.log(r);
                     setAssignment1({ ...res, ...r }); 
                     setMarks(res.max_marks_per_question);
                     setSpin1(false);
@@ -143,8 +147,11 @@ const TeacherAssignmentPage2 = () => {
     useEffect(() => { getTeacherReviews(); }, [role, assignment1._id, assignment1.status]);
 
     const stopPeerLearning = async () => {
+        setSpin1(true);
+        setSpin2(true);
         try {
             if (userData.token) {
+                
                 await fetch(`${API}/api/closeassignment?peer_assignment_id=${_id}`, {
                 method: "POST",
                 headers: {
@@ -157,14 +164,18 @@ const TeacherAssignmentPage2 = () => {
                 })
                   .then((res) => res.json())
                   .then((res) => {
-                      //alert("Peer Review Stoped");
+                    setStatus("Grading");
                   });
+
+                  setSpin1(false);
+                  setSpin2(false);
               }
           } catch (error) {
             console.error('Error:', error);
           }
     }
 
+    //console.log(assignment1);
 
     if(isDeadlinePassed){
         stopPeerLearning();
@@ -183,7 +194,7 @@ const TeacherAssignmentPage2 = () => {
                 :   <div className="dashboard">
                         <div className="contain">
                             {  
-                                assignment1.status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount}/>
+                                status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning}/>
                                 : <TeacherAssignmentView2 assg={assignment1} /> 
                             }
                         </div>

@@ -132,9 +132,9 @@ export default function TeacherAssignmentView2({ assg }) {
                                     </div>
                                 }
                             </div>
-                            <div className={styles.moreIcon}>
+                            {/* <div className={styles.moreIcon}>
                                 <MoreIcon />
-                            </div>
+                            </div> */}
                         </div>
                         <div className={styles.pdfDiv}>
                             <button className={styles.btn1}>Check for Abnormalities </button>

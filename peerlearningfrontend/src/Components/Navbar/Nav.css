@@ -71,7 +71,7 @@
   width: 340px;
   height: 100vh;
   overflow-y:scroll;
-  z-index: 1000;
+  z-index: 1001;
   display: flex;
   justify-content: center;
   position: fixed;

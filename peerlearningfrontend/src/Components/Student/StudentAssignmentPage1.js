@@ -138,9 +138,9 @@ function StudentAssignmentPage1() {
                                     </div>
                                 }
                             </div>
-                            <div className={styles.moreIcon}>
+                            {/* <div className={styles.moreIcon}>
                                 <MoreIcon />
-                            </div>
+                            </div> */}
                         </div>
                         <div className={styles.pdfDiv}>
                             <div className={styles.upper}>
