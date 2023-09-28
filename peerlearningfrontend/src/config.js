@@ -5,6 +5,6 @@
 const G_API = "https://classroom.googleapis.com/v1";
 
 //const API = "http://localhost:8000";
-const API = "http://13.200.133.5";
+const API = "https://peerlearningbackend.iiitvadodara.ac.in";
 
 module.exports = { G_API, API };
