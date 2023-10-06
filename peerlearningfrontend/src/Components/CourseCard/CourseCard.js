@@ -22,7 +22,7 @@ export default function CourseCard(props) {
     const [TeacherName, setTeacherName] = useState([]);
     const [Photo, setPhoto] = useState([]);
     const [currentRole, setCurrentRole] = useState("student");
-    const { user, userData, setCourse, setRole } = useContext(AuthContext);
+    const { user, userData, setCourse, setRole, setImageUrl} = useContext(AuthContext);
 
     let arr = ["Banner1.png", "Banner2.png", "Banner3.png", "Banner4.png", "Banner5.png"];
 
@@ -53,6 +53,7 @@ export default function CourseCard(props) {
     const OnCourseClick = () => {
         setCourse(props.data);
         setRole(currentRole);
+        setImageUrl(`/images/${arr[(props.index) % 5]}`);
         if(currentRole==="student"){
             navigate(`/scourse/${props.data.id}`);
         }

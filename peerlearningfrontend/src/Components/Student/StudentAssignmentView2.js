@@ -3,13 +3,15 @@ import { G_API, API } from "../../config";
 import AuthContext from "../../AuthContext";
 import styles from './StudentAssignmentView2.module.css';
 import { ReactComponent as AssignmentIcon } from "./Assests/Assignment.svg";
-import { ReactComponent as MoreIcon } from "./Assests/more.svg";
+//import { ReactComponent as MoreIcon } from "./Assests/more.svg";
 import { ReactComponent as Line } from "./Assests/Line.svg";
 import Thumbnail from "./Assests/thumbnail.png";
 import People from "./Assests/People.svg";
 import bottom from "../Images/Bottom.png";
 import Spinner from "../Spinner/Spinner";
 import MarksPopup from "../Popups/MarksPopup";
+import ViewReport2Popup from "../Popups/ViewReport2Popup";
+import ViewReport1Popup from "../Popups/ViewReport1Popup";
 
 function conversion(hours, minutes) {
     var t;
@@ -63,7 +65,12 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
     const { userData } = useContext(AuthContext);
     const [TeachersName, setTeachersName] = useState([]);
     const [marksvalue, SetmarksValue] = useState(false);
+    const [viewReport1, setViewReport1] = useState(false);
+    const [viewReport2, setViewReport2] = useState(false);
+    const [index, setIndex] = useState(-1);
     const [spin, setspin] = useState(true);
+
+    //console.log(assg);
 
     const truncate = (str) => {
         if (str) {
@@ -184,35 +191,10 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
                                 <p id={styles.rev}>Reviews Performed </p>
                             </div>
                             <div id={styles.allreviews}>
-                                {/* {activities?.map((activity, j) => (
-                                    <>
-                                        {(j == 0) ?
-                                            <div id={styles.report}>
-                                                <div id={styles.nameandmarks}>
-                                                    <p id={styles.aa}>Yourself</p>
-                                                    {activities[j].review_score.map((score) => {
-                                                        sum += score;
-                                                    })}
-                                                    <p id={styles.marks}>{sum}/{marksum}</p>
-                                                </div>
-                                                <button className={styles.btn4}>View questionwise Report</button>
-                                            </div>
-                                            :
-                                            <div id={styles.report}>
-                                                <div id={styles.nameandmarks}>
-                                                    <p id={styles.aa}>Peer {j}</p>
-                                                    {activities[j].review_score.map((score) => {
-                                                        x[j] = score;
-                                                        console.log(x[j]);
-                                                    })}
-                                                    <p id={styles.marks}>{x[j]}/{marksum}</p>
-                                                </div>
-                                                <button className={styles.btn4}>View questionwise Report</button>
-                                            </div>
-                                        }
-                                    </>
-                                ))} */}
                                 {youractivities?.map((activity, j) => (
+
+                                    
+
                                     <div id={styles.report} key={j}>
                                         <div id={styles.nameandmarks}>
                                             {j === 0 ? (
@@ -223,13 +205,13 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
                                             {/* Display marks based on the activity and who gave the review */}
                                             {j === 0 ? (
                                                 // Display marks given by the student (yourself)
-                                                <p id={styles.marks}>{activity.review_score[0]}/{marksum}</p>
+                                                <p id={styles.marks}>{activity.review_score.reduce((sum, score) => sum + score, 0)}/{marksum}</p>
                                             ) : (
                                                 // Display marks given by peers
-                                                <p id={styles.marks}>{activity.review_score[0]}/{marksum}</p>
+                                                <p id={styles.marks}>{activity.review_score.reduce((sum, score) => sum + score, 0)}/{marksum}</p>
                                             )}
                                         </div>
-                                        <button className={styles.btn4}>View questionwise Report</button>
+                                        <button className={styles.btn4} onClick={() => {setViewReport1(true); setIndex(j)}}>View questionwise Report</button>
                                     </div>
                                 ))}
 
@@ -247,17 +229,17 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
                                             <div id={styles.report}>
                                                 <div id={styles.nameandmarks}>
                                                     <p id={styles.aa}>Yourself</p>
-                                                    <p id={styles.marks}>{activities[0].review_score[0]}/{marksum}</p>
+                                                    <p id={styles.marks}>{activity.review_score.reduce((sum, score) => sum + score, 0)}/{marksum}</p>
                                                 </div>
-                                                <button className={styles.btn4}>View questionwise Report</button>
+                                                <button className={styles.btn4} onClick={() => {setViewReport2(true); setIndex(j)}}>View questionwise Report</button>
                                             </div>
                                             :
                                             <div id={styles.report}>
                                                 <div id={styles.nameandmarks}>
                                                     <p id={styles.aa}>Peer {j}</p>
-                                                    <p id={styles.marks}>{activities[j].review_score[0]}/{marksum}</p>
+                                                    <p id={styles.marks}>{activity.review_score.reduce((sum, score) => sum + score, 0)}/{marksum}</p>
                                                 </div>
-                                                <button className={styles.btn4}>View questionwise Report</button>
+                                                <button className={styles.btn4} onClick={() => {setViewReport2(true); setIndex(j)}}>View questionwise Report</button>
                                             </div>
                                         }
                                     </>
@@ -268,6 +250,8 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
                 </div>}
             {<img src={bottom} alt="Image" className={styles.bottom} />}
             <MarksPopup marksvalue={marksvalue} SetmarksValue={SetmarksValue} marks={marks} activities={activities} />
+            <ViewReport1Popup viewReport1={viewReport1} setViewReport1={setViewReport1} index={index} marks={marks} youractivities={youractivities}/>
+            <ViewReport2Popup viewReport2={viewReport2} setViewReport2={setViewReport2} index={index} marks={marks} activities={activities}/>
         </>
     )
 }

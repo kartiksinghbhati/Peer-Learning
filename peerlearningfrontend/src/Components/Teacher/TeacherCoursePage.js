@@ -24,7 +24,7 @@ const TeacherCoursePage = () => {
     const [css, setcss] = useState(false);
     //const [spin, setSpin] = useState(true);
 
-    const { user, userData, course } = useContext(AuthContext);
+    const { user, userData, course, imageUrl } = useContext(AuthContext);
 
     const loadData = async () =>{
         if (userData.token && course.id) {
@@ -129,7 +129,7 @@ const TeacherCoursePage = () => {
             </div>
             <div>
                 <div className={styles.banner}>
-                  <img src={bannerimg} alt="Image" className={styles.img}></img>
+                  <img src={imageUrl} alt="Image" className={styles.img}></img>
                   <p style={{ marginTop: "-104.88px", paddingLeft: "32px", fontWeight: "600", paddingBottom: "15px", color: "white", fontSize: "36px", lineHeight: "43.88px" }}>{course.name}</p>
                   <div style={{ marginTop: "-24px", paddingLeft: "32px", display: "flex" }}>
                     <p style={{ fontWeight: "500", color: "white", fontSize: "22px", lineHeight: "26.82px", paddingRight: "24px" }}>{TeacherName} </p>

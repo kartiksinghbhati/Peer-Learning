@@ -37,6 +37,8 @@ function App() {
   const [role, setRole] = useState("student");
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [imageUrl, setImageUrl] = useState(null);
+
 
   const [userData, setUserData] = useState({
     credential: undefined,
@@ -48,7 +50,7 @@ function App() {
 
     <div>
 
-      <AuthContext.Provider value={{ user, setUser, userData, setUserData, course, setCourse, assignment, setAssignment, role, setRole, open, setOpen, message, setMessage }}>
+      <AuthContext.Provider value={{ user, setUser, userData, setUserData, course, setCourse, assignment, setAssignment, role, setRole, open, setOpen, message, setMessage, imageUrl, setImageUrl }}>
         <Router>
           <ShowNavbar/>
           {/* <Breadcrumb/> */}
