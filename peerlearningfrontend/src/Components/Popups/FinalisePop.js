@@ -1,17 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import AuthContext from "../../AuthContext";
-import { G_API, API } from "../../config";
-//import { useHistory } from "react-router-dom";
+import { API } from "../../config";
 import styles from "./FinalisePop.module.css";
 
-export default function FinalisePopup({ Finalise, SetFinalise, activities, setActivities, i }) {
-    //const history = useHistory();
+export default function FinalisePopup({ Finalise, SetFinalise, activities, setActivities, i , count, setCount}) {
+
     const { setUserData, setOpen, setMessage } = useContext(AuthContext);
-    // const SubmitAction = (e) => {
-    //     e.preventDefault(false);
-    //     history.push("/");
-    //     SetFinalise(false);
-    // }
 
     const handleit = (e) => {
         const ac = activities;
@@ -33,13 +27,14 @@ export default function FinalisePopup({ Finalise, SetFinalise, activities, setAc
             .then((res) => res.json())
             .then(
                 (res) => {
-                    setOpen(true);
-                    setMessage("Successfully saved review");
+                    //setOpen(true);
+                    //setMessage("Successfully saved review");
                     setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 },
                 (err) => {
-                    setOpen(true);
-                    setMessage("Some thing went wrong while saving review");
+                    //setOpen(true);
+                    //setMessage("Some thing went wrong while saving review");
+                    alert("Some thing went wrong while saving review");
                     setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 }
             );
@@ -57,7 +52,7 @@ export default function FinalisePopup({ Finalise, SetFinalise, activities, setAc
                             </div>
                             <p id={styles.reviews}>Once Finalized, you can't make any further changes to the Scores for Peer - {i + 1}</p>
                             <div className={styles.option}>
-                                <button id={styles.btn} onClick={(e) => { SetFinalise(false); handleit(e); submitReview(activities[i])}}>Yes</button>
+                                <button id={styles.btn} onClick={(e) => { setCount(count++); SetFinalise(false); handleit(e); submitReview(activities[i])}}>Yes</button>
                                 <button id={styles.btn1} onClick={() => SetFinalise(false)}>No</button>
                             </div>
                         </div>

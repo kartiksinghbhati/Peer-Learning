@@ -1,14 +1,8 @@
 import React from "react";
-//import { useHistory } from "react-router-dom";
 import "./PopUp.css";
 
 export default function MarksPopup({ marksvalue, SetmarksValue, marks, activities}) {
-    // const history = useHistory();
-    // const SubmitAction = (e) => {
-    //     e.preventDefault(false);
-    //     history.push("/");
-    //     SetmarksValue(false);
-    // }
+
     return (
         <>
             {

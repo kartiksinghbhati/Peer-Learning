@@ -1,14 +1,7 @@
 import React, { useState } from "react";
-//import { useHistory } from "react-router-dom";
 import "./PopUp.css";
 
 export default function Self({ wrapperValue, SetWrapperValue, self, marks, setSelf }) {
-    // const history = useHistory();
-    // const SubmitAction = (e) => {
-    //     e.preventDefault(false);
-    //     history.push("/");
-    //     SetWrapperValue(false);
-    // }
 
     const handleSelfScoreChange = (k, e) => {
         let { value, min, max } = e.target;

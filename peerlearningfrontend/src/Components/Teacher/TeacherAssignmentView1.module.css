@@ -132,7 +132,7 @@
 
 .pdfDiv {
   width: 300px;
-  height: 230px;
+  height: 275px;
   background: #ffffff;
   box-shadow: -1px 0px 4px rgba(0, 0, 0, 0.25), 1px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 6px;
@@ -146,19 +146,19 @@
   color: #c5221f;
 }
 
-.btn2, .btn3, .btn4 {
+.btn2, .btn3, .btn4{
   margin-top: 18px;
   background: #ffffff;
   color: #1A73E8;
 }
 
-.btn4 {
+.btn5 {
   margin-top: 18px;
   color: #ffffff;
   background-color: #1A73E8;
 }
 
-.btn1, .btn2, .btn3, .btn4 {
+.btn1, .btn2, .btn3, .btn4, .btn5 {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 14px;
@@ -178,6 +178,17 @@
   line-height: 24px;
   margin-top: 20px;
   margin-left: 170px;
+}
+
+.studentSubmissions{
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  padding: 8px 0px 5px 20px;
+  margin-top: 100px;
+  margin-left: 28px;
+  /* color: #8AB6D6; */  
 }
 
 .bottom{
@@ -207,13 +218,34 @@
 }
 
 .studentList .noSubmission {
-  color: red;
+  color: black;
+}
+
+.studentFullName {
+  color : blue;
+  font-weight: bold;
+  display: inline;
+}
+
+.flagstudentFullName {
+  color : black;
+  font-weight: bold;
+  display: inline;
+}
+
+.redflagimg {
+  width: 20px;
+  height: 20px; 
+  margin-left: 10px; 
+  display: inline;
 }
 
 .emptyScore {
   color: red;
+  font-weight: bold;
 }
 
 .nonEmptyScore {
-  color: green;
+  color: rgb(58, 248, 58);
+  font-weight: bold;
 }

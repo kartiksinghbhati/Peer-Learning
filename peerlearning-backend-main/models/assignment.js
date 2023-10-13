@@ -26,6 +26,9 @@ const AssignmentSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  tolerance: {
+    type: Number,
+  },
   max_marks_per_question: {
     type : Array,
     required: true,

@@ -13,6 +13,7 @@ const activitiesRouter = require('./routes/Teacher/activities')
 const getIssuesRouter = require('./routes/Teacher/getIssues')
 const addIssueRouter = require('./routes/Student/addIssue')
 const closeAssignmentRouter = require('./routes/Teacher/closeAssignment')
+const assignmentScheduler = require('./controllers/Teacher/assignmentSchedular')
 const downloadRouter = require('./routes/Teacher/download')
 const getLogsRouter = require('./routes/Teacher/getlogs')
 const getReviewsRouter = require('./routes/Student/getReviews')
@@ -75,3 +76,5 @@ const PORT = process.env.PORT || 8000
 app.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}`)
 })
+
+assignmentScheduler.start();

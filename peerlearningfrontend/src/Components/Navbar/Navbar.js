@@ -12,19 +12,21 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
 import AuthContext from '../../AuthContext';
+//import Cookies from "js-cookie"; // Import the js-cookie library
 
 export default function Navbar(props) {
 
   const navigate = useNavigate();
 
   const { user, userData, setUserData, setCourse } = useContext(AuthContext);
+  //const user = Cookies.get("user");
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [Value, setValue] = useState(true);
   const [courses, setCourses] = useState([]);
 
    // Function to toggle the sidebar open/close state
-   const showSidebar = (event) => {
+  const showSidebar = (event) => {
     setSidebarOpen(!sidebarOpen);
   };
 
@@ -35,6 +37,8 @@ export default function Navbar(props) {
       token: undefined,
       loader: 0,
     });
+    //Cookies.remove('accessToken');
+    //Cookies.remove('user');
     navigate('/login');
   }
 
@@ -51,6 +55,7 @@ export default function Navbar(props) {
 
 
   useEffect(() => {
+    
     if (userData.token) {
       setUserData((u) => ({ ...u, loader: u.loader + 1 }));
       fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE", {

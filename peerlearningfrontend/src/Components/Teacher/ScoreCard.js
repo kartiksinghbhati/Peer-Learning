@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 export const ScoreCard = (props) => {
   const [isShown, setIsShown] = useState(false);
+  //console.log(props.data);
   return (
     <div
       className="link-with-preview"
@@ -23,6 +24,7 @@ const Card = (props) => {
     });
     setScore(i);
   }, []);
+
   return (
     <div className="card" style={{ width: "300px", marginLeft: "150px" }}>
       <p style={{ fontSize: "18px", marginLeft: "10px" }}>Total Score: {score}</p>
@@ -44,16 +46,9 @@ const Card = (props) => {
       </table>
       <p style={{ fontSize: "15px", marginTop: "10px", marginLeft: "10px" }}>View Submission :
         <a target="_blank" rel="noreferrer" href={props.data.material_drive_link} style={{ height: "20px" }}>
-          <input type="text" value="Answersheet.pdf" style={{ marginTop: "8px", textAlign: "center", cursor: "pointer", backgroundColor: "white" }} disabled></input>
+          <input type="text" value="Answersheet.pdf" style={{ marginTop: "8px", textAlign: "center", cursor: "pointer", backgroundColor: "white" }} ></input>
         </a>
       </p>
     </div>
   );
 };
-
-
-    // <div
-    //   className="link-with-preview"
-    //   onMouseEnter={() => setIsShown(true)}
-    //   onMouseLeave={() => setIsShown(false)}
-    // >

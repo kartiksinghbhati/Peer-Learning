@@ -1,14 +1,7 @@
 import React from "react";
-//import { useHistory } from "react-router-dom";
 import "./PopUp.css";
 
-export default function Account({ wrapperValue, SetWrapperValue, marks, activities, setActivities, i }) {
-    // const history = useHistory();
-    // const SubmitAction = (e) => {
-    //     e.preventDefault(false);
-    //     history.push("/");
-    //     SetWrapperValue(false);
-    // }
+export default function PopUp({ wrapperValue, SetWrapperValue, marks, activities, setActivities, i }) {
 
     const handleScoreChange = (i, k, e) => {
         let { value, min, max } = e.target;

@@ -5,6 +5,7 @@ import { ReactComponent as AssignmentIcon } from "./Assests/Assignment.svg";
 import { ReactComponent as MoreIcon } from "./Assests/more.svg";
 import { ReactComponent as Line } from "./Assests/Line.svg";
 import thumbnail from "../Student/Assests/thumbnail.png";
+import redflag from "../Images/redflag.png";
 import bottom from "../Images/Bottom.png";
 import styles from "./TeacherAssignmentView1.module.css";
 import { ScoreCard } from "./ScoreCard";
@@ -59,14 +60,54 @@ function none(hours) {
 }
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+function bufferMarksCal(marks, tolerance) {
+
+  const buffer = [];
+
+  for (let i = 0; i < marks.length; i++) {
+    buffer.push((marks[i] * tolerance) / 100);
+  }
+
+  return buffer;
+}
+
+function compareMarks(row, bufferMarks) {
+  //console.log("index= "+index);
+  //console.log(row);
+
+  let flag = false;
+  const rs = row[1]?.review_score;
+  //console.log(rs.length);
+  //console.log(rs);
+
+  if (rs && rs.length > 0) {
+    //console.log("length "+rs.length);
+
+    for (let i = 2; i < row.length; i++) {
+      for (let j = 0; j < row[i].review_score.length; j++) {
+        //const buffer = marks[j]*0.2;
+        const diff = Math.abs(rs[j] - row[i].review_score[j]);
+        if (diff > bufferMarks[j]) {
+          flag = true;
+        }
+      }
+    }
+
+  }
+
+  return flag;
+}
+
 export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount, stopPeerLearning }) {
-  // console.log(assg);
-  // console.log(activities);
+   //console.log(assg);
+  //console.log(activities);
   // console.log(marks);
   // console.log(reviewerCount);
 
   const { userData, assignment } = useContext(AuthContext);
   const _id = assignment._id;
+
+  const bufferMarks = bufferMarksCal(marks, assg.tolerance);
 
   var i = 200;
   var j = 1000;
@@ -78,12 +119,29 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
   const [TeacherName, setTeacherName] = useState([]);
   const [spin, setspin] = useState(true);
   const [showStopConfirmation, setShowStopConfirmation] = useState(false);
+  const [sortFlaggedStudents, setSortFlaggedStudents] = useState(false);
 
   const truncate = (str) => {
     if (str) {
       return str.length > 60 ? str.substring(0, 59) + "..." : str;
     }
   }
+
+
+  let formattedDeadline = "";
+  if(assg.reviewer_deadline !== undefined){
+    const deadlineDate = new Date(assg.reviewer_deadline);
+    const options = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    };
+    formattedDeadline = deadlineDate.toLocaleDateString('en-US', options);
+  }
+  
 
   const loadData = async () => {
 
@@ -109,7 +167,13 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
     }
   }
 
-  useEffect(() => { loadData() }, [userData.token]);
+  useEffect(() => { loadData() }, [userData.token, assg]);
+
+  const sortedActivities = activities.slice().sort((a, b) => {
+    const flagA = compareMarks(a, bufferMarks);
+    const flagB = compareMarks(b, bufferMarks);
+    return sortFlaggedStudents ? flagB - flagA : 0;
+  });
 
   return (
     <>
@@ -126,7 +190,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                 <div className={styles.pointsanddue}>
                   {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Ungraded</p>}
                   <div className={styles.duediv}>
-                    {assg.dueDate ? <p className={styles.due}>Due {assg.dueDate.day}/{assg.dueDate.month}/{assg.dueDate.year}, {assg.dueTime.minutes ? conversion(assg.dueTime.hours, assg.dueTime.minutes) : none(assg.dueTime.hours)} </p> : <p className={styles.due}>No Due Date</p>}
+                    {assg.reviewer_deadline ? <p className={styles.due}>Due {formattedDeadline} </p> : <p className={styles.due}>No Due Date</p>}
                   </div>
                 </div>
                 <Line className={styles.line} />
@@ -157,64 +221,19 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
             <div className={styles.pdfDiv}>
               <button className={styles.btn1}>Check for Abnormalities </button>
               <button className={styles.btn2}>View student Reviews</button>
-              <button className={styles.btn3} onClick={() => setShowStopConfirmation(true)}>Stop Peer Learning </button>
-              <button className={styles.btn4}>View detailed Analytics </button>
+              <button className={styles.btn3} onClick={() => setSortFlaggedStudents(!sortFlaggedStudents)}>Sort Flagged Students</button>
+              <button className={styles.btn4} onClick={() => setShowStopConfirmation(true)}>Stop Peer Learning </button>
+              <button className={styles.btn5}>View detailed Analytics </button>
             </div>
           </div>
           <p className={styles.completeprogress}>Completion Progress</p>
 
-          {/* <PieChart width={600} height={350}>
-                        <Pie
-                            data={data}
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={150}
-                            dataKey="students"
-                            label={({
-                                cx,
-                                cy,
-                                midAngle,
-                                innerRadius,
-                                outerRadius,
-                                value,
-                                index
-                            }) => {
-                                console.log("handling label?");
-                                const RADIAN = Math.PI / 180;
-                                // eslint-disable-next-line
-                                const radius = 25 + innerRadius + (outerRadius - innerRadius);
-                                // eslint-disable-next-line
-                                const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                                // eslint-disable-next-line
-                                const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-                                return (
-                                    <text
-                                        x={x}
-                                        y={y}
-                                        fill="#8884d8"
-                                        textAnchor={x > cx ? "start" : "end"}
-                                        dominantBaseline="central">
-                                        {data[index].name} ({value})
-                                    </text>
-                                );
-                            }}
-                        />
-                    </PieChart> */}
-                    {activities.length > 0 && assg.status !== "Added" && (
+          {activities.length > 0 && assg.status !== "Added" && (
             <>
-              <p
-                style={{
-                  padding: "8px 0px 5px 20px",
-                  marginLeft: "-10px",
-                  fontSize: "20px",
-                  color: "#8AB6D6",
-                  marginTop: "100px",
-                }}
-              >
-                Student Submissions
-              </p>
+              <p className={styles.studentSubmissions}> Student Submissions </p>
+
               <table className={styles.studentList}>
+
                 <thead>
                   <tr>
                     <th>Student Name</th>
@@ -225,95 +244,57 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                       ))}
                   </tr>
                 </thead>
+                
                 <tbody>
-                  {activities.map((row) => (
-                    <tr key={row.name}>
-                      <td>
-                        {row[0].profile.name.fullName}
-                      </td>
-                      {
-                      row.slice(1).map((r) => {
-                        const isDataEmpty = r.review_score.length === 0;
-                      
-                        // Define a class name based on the condition
-                        const tdClassName = isDataEmpty ? styles.emptyScore : styles.nonEmptyScore;
-                      
-                        return (
-                          <td key={r.name.fullName}>
-                            {/* {console.log(assg.total_questions)} */}
-                            <ScoreCard data={r} questions={assg.total_questions}>
-                              
-                              <div className={tdClassName}>{r.name.fullName}</div>
-                            </ScoreCard>
-                          </td>
-                        );
-                      })
-                      }
-                      {row.length === 1 && (
-                        <>
-                          {Array(reviewerCount)
-                            .fill(0)
-                            .map((_, i) => (
-                              <td
-                                key={`no-submission-${i}`}
-                                className={styles.noSubmission}
-                              >
+                  {sortedActivities.map((row, index) => {
+
+                    const flag = compareMarks(row, bufferMarks);
+
+                    const studentName = flag ? styles.flagstudentFullName : styles.studentFullName;
+
+                    return (
+                      <tr key={row.name}>
+                        <td>
+                          <div className={studentName}>{row[0].profile.name.fullName}</div>
+                          {flag && <img src={redflag} alt="RedFlag" className={styles.redflagimg} />}
+                        </td>
+                        {/* <td>
+                          <div className={studentName} >{row[0].profile.name.fullName}</div>
+                          {flag && <img src={redflag} alt="RedFlag" className={styles.redflagimg}/>}
+                        </td> */}
+
+                        {row.slice(1).map((r) => {
+                          const isDataEmpty = r.review_score.length === 0;
+
+                          // Define a class name based on the condition
+                          const tdClassName = isDataEmpty ? styles.emptyScore : styles.nonEmptyScore;
+
+                          return (
+                            <td key={r.name.fullName}>
+                              <ScoreCard data={r} questions={assg.total_questions}>
+                                <div className={tdClassName}>{r.name.fullName}</div>
+                              </ScoreCard>
+                            </td>
+                          );
+                        })}
+
+                        {row.length === 1 && (
+                          <>
+                            {Array(reviewerCount).fill(0).map((_, i) => (
+                              <td key={`no-submission-${i}`} className={styles.noSubmission}>
                                 No Submission
                               </td>
                             ))}
-                        </>
-                      )}
-                    </tr>
-                  ))}
+                          </>
+                        )}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </>
           )}
-          {/* {activities.length > 0 && assg.status !== "Added" && (
-                        <>
-                            <p style={{ padding: "8px 0px 5px 20px", marginLeft: "-10px", fontSize: "20px", color: "#8AB6D6", marginTop: "100px" }}>Student Submissions</p>
-                            <table className="reviewers" style={{ width: "90%", backgroundColor: "white", marginLeft: "10px" }}>
-                                <tr>
-                                    <th style={{ textAlign: "center" }}>Student Name</th>
-                                    {Array(reviewerCount).fill(0).map((a, i) => (
-                                        <th style={{ textAlign: "center" }}>
-                                            Reviewer {i + 1}
-                                        </th>
-                                    ))}
-                                </tr>
-                                <tbody>
-                                    {activities.map((row) => (
-                                        <tr key={row.name} >
-                                            <td>
-                                                {row[0].profile.name.fullName}
-                                            </td>
 
-                                            {row.slice(1, row.length).map((r) => (
-                                                <td align="left" key={r.name.fullName}>
-                                                    <ScoreCard
-                                                        data={r}
-                                                        questions={assg.total_questions}
-                                                    >
-                                                        {r.name.fullName}
-                                                    </ScoreCard>
-                                                </td>
-                                            ))}
-                                            {row.length === 1 && (
-                                                <>
-                                                    {Array(reviewerCount).fill(0).map((a, i) => (
-                                                        <td align="left" style={{ color: "red" }}>
-                                                            No Submission
-                                                        </td>
-                                                    ))
-                                                    }
-                                                </>
-                                            )}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </>
-                    )} */}
         </div>}
       {<img src={bottom} alt="Image" className={styles.bottom} />}
 
@@ -322,82 +303,3 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
   );
 }
 
-
-
-
-
-
-
-
-
-
-
-          // {activities.length > 0 && assg.status !== "Added" && (
-          //   <>
-          //     <p
-          //       style={{
-          //         padding: "8px 0px 5px 20px",
-          //         marginLeft: "-10px",
-          //         fontSize: "20px",
-          //         color: "#8AB6D6",
-          //         marginTop: "100px",
-          //       }}
-          //     >
-          //       Student Submissions
-          //     </p>
-          //     <table className={styles.studentList}>
-          //       <thead>
-          //         <tr>
-          //           <th>Student Name</th>
-          //           {Array(reviewerCount)
-          //             .fill(0)
-          //             .map((_, i) => (
-          //               <th key={`reviewer-${i}`}>Reviewer {i + 1}</th>
-          //             ))}
-          //         </tr>
-          //       </thead>
-          //       <tbody>
-          //         {activities.map((row) => (
-          //           <tr key={row.name}>
-          //             <td>
-          //               {row[0].profile.name.fullName}
-          //             </td>
-          //             {
-          //             row.slice(1).map((r) => {
-          //               const isDataEmpty = r.review_score.length === 0;
-                      
-          //               // Define a class name based on the condition
-          //               const tdClassName = isDataEmpty ? styles.emptyScore : styles.nonEmptyScore;
-                      
-          //               return (
-          //                 <td key={r.name.fullName}>
-          //                   {console.log(assg.total_questions)}
-          //                   <ScoreCard data={r} questions={assg.total_questions}>
-                              
-          //                     <div className={tdClassName}>{r.name.fullName}</div>
-          //                   </ScoreCard>
-          //                 </td>
-          //               );
-          //             })
-          //             }
-          //             {row.length === 1 && (
-          //               <>
-          //                 {Array(reviewerCount)
-          //                   .fill(0)
-          //                   .map((_, i) => (
-          //                     <td
-          //                       key={`no-submission-${i}`}
-          //                       className={styles.noSubmission}
-          //                     >
-          //                       No Submission
-          //                     </td>
-          //                   ))}
-          //               </>
-          //             )}
-          //           </tr>
-          //         ))}
-          //       </tbody>
-          //     </table>
-          //   </>
-          // )}
-        

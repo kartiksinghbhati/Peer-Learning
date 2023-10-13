@@ -26,19 +26,19 @@ const TeacherAssignmentPage2 = () => {
     const [status, setStatus] = useState("");
 
 
-    const currentDate = new Date();
-    // Specify your deadline year, month, day, hour, and minute values
-    const deadlineYear = assignment.dueDate.year;
-    const deadlineMonth = assignment.dueDate.month;
-    const deadlineDay = assignment.dueDate.day;
-    const deadlineHour = assignment.dueTime.hours;
-    const deadlineMinutes = assignment.dueTime.minutes;
+    // const currentDate = new Date();
+    // // Specify your deadline year, month, day, hour, and minute values
+    // const deadlineYear = assignment.dueDate.year;
+    // const deadlineMonth = assignment.dueDate.month;
+    // const deadlineDay = assignment.dueDate.day;
+    // const deadlineHour = assignment.dueTime.hours;
+    // const deadlineMinutes = assignment.dueTime.minutes;
 
-    // Create the deadline date objects
-    const deadlineDate = new Date(deadlineYear, deadlineMonth - 1, deadlineDay, deadlineHour, deadlineMinutes); // Subtract 1 from the month because it's zero-based
+    // // Create the deadline date objects
+    // const deadlineDate = new Date(deadlineYear, deadlineMonth - 1, deadlineDay, deadlineHour, deadlineMinutes); // Subtract 1 from the month because it's zero-based
     
-    // Compare the current date with the deadline date
-    const isDeadlinePassed = currentDate > deadlineDate;
+    // // Compare the current date with the deadline date
+    // const isDeadlinePassed = currentDate > deadlineDate;
 
 
     const loadData = async () =>{
@@ -47,7 +47,8 @@ const TeacherAssignmentPage2 = () => {
             await fetch(`${API}/api/peer/assignment?peer_assignment_id=${_id}`)
               .then((res) => res.json())
               .then(async (res) => {
-                //console.log(res);
+                console.log(res);
+
                 setStatus(res.status);
                 await fetch(
                   `${G_API}/courses/${course_id}/courseWork/${res.assignment_id}`,
@@ -69,13 +70,14 @@ const TeacherAssignmentPage2 = () => {
           }
     }
 
-    useEffect(() => { loadData() }, [userData.token]);
+    useEffect(() => { loadData() }, [userData.token, assignment1.status]);
 
     const getTeacherReviews = async () => {
         //setUserData((u) => ({ ...u, loader: u.loader + 1 }));
         await fetch(`${API}/api/peeractivity?peer_assignment_id=${_id}`) //for getting reviews and comments of students
             .then((res) => res.json())
             .then((res) => {
+                // console.log(res);
                 fetch(
                     `https://classroom.googleapis.com/v1/courses/${course_id}/students`, //gets the list of all students enrolled in the course
                     {
@@ -87,64 +89,73 @@ const TeacherAssignmentPage2 = () => {
                 )
                 .then((r) => r.json())
                 .then((r) => {
-                setUserData((u) => ({ ...u, loader: u.loader - 1 }));
+                    setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 
-                let a = [];
-                let authorMap = {};  //for storing the list of all students info with their id as key
+                    
+                    let authorMap = {};  //for storing the list of all students info with their id as key
                 
-                r.students.forEach((s) => {
-                    authorMap[s.userId] = [s];
-                });
-                
-                res.forEach((activity) => {
-                    if (authorMap[activity.author_id] !== undefined) {
-                    authorMap[activity.author_id] = [
-                        ...authorMap[activity.author_id],
-                        {
-                        ...activity,
-                        ...authorMap[activity.reviewer_id][0].profile,
-                        },
-                    ];
-                    }
-                });
+                    r.students.forEach((s) => {
+                        authorMap[s.userId] = [s];
+                    });
 
-                Object.keys(authorMap).forEach((author) => {
-                    a.push(authorMap[author]);
-                });
-                setActivities([...a]);
-                let em = []; //store ids of students who have not submitted their reviews
-                res.forEach((act) => {
-                    if (act.review_score.length === 0) {
-                    em.push(authorMap[act.reviewer_id][0].profile.emailAddress);
-                    }
-                });
-                var countReviewr = 0;
-                a.forEach((tttt) => {
-                    if (countReviewr < (tttt.length)) {
-                    countReviewr = tttt.length - 1;
-                    }
-                });
                 
-                setReviewerCount(countReviewr);
-                
-                setMail(
-                    "mailto:" +
-                    encodeURI(em) +
-                    "?subject=" +
-                    encodeURI("Complete the review process ASAP") +
-                    "&body=" +
-                    encodeURI(
-                    "Submit the reviews on assigned answersheets. Link - https://serene-agnesi-9ee115.netlify.app/"
-                    )
-                );
+                    res.forEach((activity) => {
 
-                setSpin2(false);
+                        if (authorMap[activity.author_id] !== undefined) {
+                            
+                            authorMap[activity.author_id] = [...authorMap[activity.author_id],
+                                {
+                                ...activity,
+                                ...authorMap[activity.reviewer_id][0].profile,
+                                },
+                            ];
+                            
+                        }
+                        
+                    });
+
+                    let a = [];
+
+                    Object.keys(authorMap).forEach((author) => {
+                        a.push(authorMap[author]);
+                    });
+
+                    setActivities([...a]);
+
+                    let em = []; //store ids of students who have not submitted their reviews
+                    res.forEach((act) => {
+                        if (act.review_score.length === 0) {
+                        em.push(authorMap[act.reviewer_id][0].profile.emailAddress);
+                        }
+                    });
+
+                    var countReviewr = 0;
+                    a.forEach((tttt) => {
+                        if (countReviewr < (tttt.length)) {
+                        countReviewr = tttt.length - 1;
+                        }
+                    });
+                    
+                    setReviewerCount(countReviewr);
+                    
+                    setMail(
+                        "mailto:" +
+                        encodeURI(em) +
+                        "?subject=" +
+                        encodeURI("Complete the review process ASAP") +
+                        "&body=" +
+                        encodeURI(
+                        "Submit the reviews on assigned answersheets. Link - https://serene-agnesi-9ee115.netlify.app/"
+                        )
+                    );
+
+                    setSpin2(false);
                 
                 });
             });
     };    
 
-    useEffect(() => { getTeacherReviews(); }, [role, assignment1._id, assignment1.status]);
+    useEffect(() => { getTeacherReviews(); }, [role, assignment1._id, activities]);
 
     const stopPeerLearning = async () => {
         setSpin1(true);
@@ -164,6 +175,7 @@ const TeacherAssignmentPage2 = () => {
                 })
                   .then((res) => res.json())
                   .then((res) => {
+                    console.log(res);
                     setStatus("Grading");
                   });
 
@@ -175,34 +187,20 @@ const TeacherAssignmentPage2 = () => {
           }
     }
 
-    //console.log(assignment1);
-
-    if(isDeadlinePassed){
-        stopPeerLearning();
-        return (
-            <>
-            {spin1 && spin2 ? <Spinner/>
-                :   <TeacherAssignmentView2 assg={assignment1} />
-            }
-            </>
-        );
-    }
-    else{
-        return (
-            <>
-            {spin1 && spin2 ? <Spinner/>
-                :   <div className="dashboard">
-                        <div className="contain">
-                            {  
-                                status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning}/>
-                                : <TeacherAssignmentView2 assg={assignment1} /> 
-                            }
-                        </div>
+    return (
+        <>
+        {spin1 && spin2 ? <Spinner/>
+            :   <div className="dashboard">
+                    <div className="contain">
+                        {  
+                            status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning}/>
+                            : <TeacherAssignmentView2 assg={assignment1} /> 
+                        }
                     </div>
-            }
-            </>
-        );
-    }
+                </div>
+        }
+        </>
+    );
 };
 
 export default TeacherAssignmentPage2;

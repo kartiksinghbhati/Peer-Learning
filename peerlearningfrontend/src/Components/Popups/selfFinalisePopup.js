@@ -1,19 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import AuthContext from "../../AuthContext";
-import { G_API, API } from "../../config";
-//import { useHistory } from "react-router-dom";
+import { API } from "../../config";
 import styles from "./FinalisePop.module.css";
 
-export default function SelfFinalisePopup({ selfFinalise, SetselfFinalise, self, setSelf }) {
-    //const history = useHistory();
+export default function SelfFinalisePopup({ selfFinalise, SetselfFinalise, self, setSelf, count, setCount}) {
+    
     const { userData, setUserData, setOpen, setMessage } = useContext(
         AuthContext
     );
-    // const SubmitAction = (e) => {
-    //     e.preventDefault(false);
-    //     history.push("/");
-    //     SetselfFinalise(false);
-    // }
 
     const handleit = (e) => {
         const s = self;
@@ -35,13 +29,14 @@ export default function SelfFinalisePopup({ selfFinalise, SetselfFinalise, self,
             .then((res) => res.json())
             .then(
                 (res) => {
-                    setOpen(true);
-                    setMessage("Successfully saved review");
+                    // setOpen(true);
+                    // setMessage("Successfully saved review");
                     setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 },
                 (err) => {
-                    setOpen(true);
-                    setMessage("Some thing went wrong while saving review");
+                    // setOpen(true);
+                    // setMessage("Some thing went wrong while saving review");
+                    alert("Some thing went wrong while saving review");
                     setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 }
             );
@@ -59,7 +54,7 @@ export default function SelfFinalisePopup({ selfFinalise, SetselfFinalise, self,
                             </div>
                             <p id={styles.reviews}>Once Finalized, you can't make any further changes to your Scores</p>
                             <div className={styles.option}>
-                                <button id={styles.btn} onClick={(e) => { SetselfFinalise(false); handleit(e); submitReview(self) }}>Yes</button>
+                                <button id={styles.btn} onClick={(e) => { setCount(count++); SetselfFinalise(false); handleit(e); submitReview(self) }}>Yes</button>
                                 <button id={styles.btn1} onClick={() => SetselfFinalise(false)}>No</button>
                             </div>
                         </div>
