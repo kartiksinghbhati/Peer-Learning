@@ -175,8 +175,8 @@ const TeacherAssignmentPage2 = () => {
                 })
                   .then((res) => res.json())
                   .then((res) => {
-                    console.log(res);
-                    setStatus("Grading");
+                    //console.log(res);
+                    setStatus(res);
                   });
 
                   setSpin1(false);

@@ -91,7 +91,7 @@ export default function TeacherAssignmentView2({ assg }) {
         }
     }
 
-    useEffect(() => { loadData() }, [userData.token]);
+    useEffect(() => { loadData() }, [userData.token, assg]);
 
     return (
         <>
