@@ -36,6 +36,9 @@ const AssignmentSchema = new mongoose.Schema({
   reviewer_deadline: {
     type: String,
   },
+  isFreeze: {
+    type: Boolean,
+  },
   status: {
     type: String,
   },

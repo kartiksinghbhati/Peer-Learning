@@ -13,6 +13,7 @@ exports.addPeerReview = async (req, res) => {
   assignment.status = 'Added'
   assignment.total_questions = marksArray.length
   assignment.tolerance = req.body.tolerance
+  assignment.isFreeze = req.body.isFreeze
   assignment.modelAnswerSheetUrl = req.body.modelAnswerSheetUrl
 
   await axios
