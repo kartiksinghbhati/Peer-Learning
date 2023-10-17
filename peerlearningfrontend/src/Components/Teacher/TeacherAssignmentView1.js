@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { G_API, API } from "../../config";
 import AuthContext from "../../AuthContext";
 import { ReactComponent as AssignmentIcon } from "./Assests/Assignment.svg";
-import { ReactComponent as MoreIcon } from "./Assests/more.svg";
 import { ReactComponent as Line } from "./Assests/Line.svg";
 import thumbnail from "../Student/Assests/thumbnail.png";
 import redflag from "../Images/redflag.png";
@@ -11,7 +10,7 @@ import styles from "./TeacherAssignmentView1.module.css";
 import { ScoreCard } from "./ScoreCard";
 import Spinner from "../Spinner/Spinner";
 import StopPeerLearningPopup from "../Popups/StopPeerLearningPopup";
-//import { PieChart, Pie } from 'recharts';
+import FreezeAssignmentPopup from "../Popups/FreezeAssignmentPopup";
 
 function conversion(hours, minutes) {
   var t;
@@ -72,20 +71,13 @@ function bufferMarksCal(marks, tolerance) {
 }
 
 function compareMarks(row, bufferMarks) {
-  //console.log("index= "+index);
-  //console.log(row);
 
   let flag = false;
   const rs = row[1]?.review_score;
-  //console.log(rs.length);
-  //console.log(rs);
 
   if (rs && rs.length > 0) {
-    //console.log("length "+rs.length);
-
     for (let i = 2; i < row.length; i++) {
       for (let j = 0; j < row[i].review_score.length; j++) {
-        //const buffer = marks[j]*0.2;
         const diff = Math.abs(rs[j] - row[i].review_score[j]);
         if (diff > bufferMarks[j]) {
           flag = true;
@@ -98,16 +90,38 @@ function compareMarks(row, bufferMarks) {
   return flag;
 }
 
-export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount, stopPeerLearning }) {
+// function finalGradeCal(activities) {
+
+//   let finalGrades = [];
+  
+//   activities.forEach((s) => {
+//     if(s.length>1){
+//       let grades = 0;
+//       for (let i = 1; i < s.length; i++) {
+//         let score = s[i].review_score;
+//         for(let j = 0; j < score.length; j++){
+//           grades = grades + score[j];
+//         }
+//       }
+//       finalGrades[s[0].userId] = [grades];
+//     }
+    
+//   });
+
+//   //console.log(finalGrades);
+//   return finalGrades;
+// }
+
+export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount, stopPeerLearning, freezeAssignment}) {
    //console.log(assg);
   //console.log(activities);
-  // console.log(marks);
-  // console.log(reviewerCount);
+
 
   const { userData, assignment } = useContext(AuthContext);
   const _id = assignment._id;
 
   const bufferMarks = bufferMarksCal(marks, assg.tolerance);
+  let finalGrades = [];
 
   var i = 200;
   var j = 1000;
@@ -118,6 +132,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
   ];
   const [TeacherName, setTeacherName] = useState([]);
   const [spin, setspin] = useState(true);
+  const [showFreezeConfirmation, setShowFreezeConfirmation] = useState(false);
   const [showStopConfirmation, setShowStopConfirmation] = useState(false);
   const [sortFlaggedStudents, setSortFlaggedStudents] = useState(false);
 
@@ -154,7 +169,6 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
       })
         .then((res) => res.json())
         .then((res) => {
-          // console.log(res.teachers);
           var len = res.teachers.length;
           for (var i = 0; i < len; i++) {
             if (res.teachers[i].userId == assg.creatorUserId) {
@@ -209,24 +223,21 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                     <img id={styles.thumbnail1} src={thumbnail} />
                     <div id={styles.written}>
                       <p id={styles.ques}>No Question Paper Uploaded</p>
-                      {/* <p id={styles.type}>PDF</p> */}
                     </div>
                   </div>
                 }
               </div>
-              {/* <div className={styles.moreIcon}>
-                                <MoreIcon />
-                            </div> */}
             </div>
             <div className={styles.pdfDiv}>
               <button className={styles.btn1}>Check for Abnormalities </button>
               <button className={styles.btn2}>View student Reviews</button>
               <button className={styles.btn3} onClick={() => setSortFlaggedStudents(!sortFlaggedStudents)}>Sort Flagged Students</button>
-              <button className={styles.btn4} onClick={() => setShowStopConfirmation(true)}>Stop Peer Learning </button>
-              <button className={styles.btn5}>View detailed Analytics </button>
+              <button className={styles.btn4} onClick={() => setShowFreezeConfirmation(true)}>Freeze Marks</button>
+              <button className={styles.btn5} onClick={() => setShowStopConfirmation(true)}>Stop Peer Learning </button>
+              <button className={styles.btn6}>View detailed Analytics </button>
             </div>
           </div>
-          <p className={styles.completeprogress}>Completion Progress</p>
+          {/* <p className={styles.completeprogress}>Completion Progress</p> */}
 
           {activities.length > 0 && assg.status !== "Added" && (
             <>
@@ -237,11 +248,14 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                 <thead>
                   <tr>
                     <th>Student Name</th>
+                    
+                    {assg.isFreeze && ( <th>Final Grades</th> )}
+
                     {Array(reviewerCount)
                       .fill(0)
                       .map((_, i) => (
                         <th key={`reviewer-${i}`}>Reviewer {i + 1}</th>
-                      ))}
+                    ))}
                   </tr>
                 </thead>
                 
@@ -258,15 +272,17 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                           <div className={studentName}>{row[0].profile.name.fullName}</div>
                           {flag && <img src={redflag} alt="RedFlag" className={styles.redflagimg} />}
                         </td>
-                        {/* <td>
-                          <div className={studentName} >{row[0].profile.name.fullName}</div>
-                          {flag && <img src={redflag} alt="RedFlag" className={styles.redflagimg}/>}
-                        </td> */}
+
+                        {assg.isFreeze && (
+                          <td>
+                            <div className={studentName}>{finalGrades[row[0].userId]}</div>
+                          </td>
+                        )}
 
                         {row.slice(1).map((r) => {
                           const isDataEmpty = r.review_score.length === 0;
 
-                          // Define a class name based on the condition
+                         
                           const tdClassName = isDataEmpty ? styles.emptyScore : styles.nonEmptyScore;
 
                           return (
@@ -298,7 +314,22 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
         </div>}
       {<img src={bottom} alt="Image" className={styles.bottom} />}
 
-      <StopPeerLearningPopup stopPeerLearning={stopPeerLearning} showStopConfirmation={showStopConfirmation} setShowStopConfirmation={setShowStopConfirmation} />
+      <StopPeerLearningPopup 
+        assg={assg} 
+        stopPeerLearning={stopPeerLearning} 
+        showStopConfirmation={showStopConfirmation} 
+        setShowStopConfirmation={setShowStopConfirmation} 
+        finalGrades={finalGrades}
+      />
+
+      <FreezeAssignmentPopup 
+        activities={activities} 
+        freezeAssignment={freezeAssignment} 
+        showFreezeConfirmation={showFreezeConfirmation} 
+        setShowFreezeConfirmation={setShowFreezeConfirmation} 
+        finalGrades={finalGrades}
+      />
+
     </>
   );
 }

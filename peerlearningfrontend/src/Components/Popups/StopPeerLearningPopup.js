@@ -3,28 +3,105 @@ import AuthContext from "../../AuthContext";
 import { API } from "../../config";
 import styles from "./FinalisePop.module.css";
 
-export default function StopPeerLearningPopup({ stopPeerLearning, showStopConfirmation, setShowStopConfirmation }) {
+export default function StopPeerLearningPopup({ assg, finalGrades, stopPeerLearning, showStopConfirmation, setShowStopConfirmation }) {
+
+    const { userData } = useContext(AuthContext);
+    const [isLoading, setIsLoading] = useState(false);
+    
+    const finalMarksCal = async (grade, index) => {
+        try {
+            if (userData.token) {
+                //setIsLoading(true);
+
+                await fetch(`${API}/api/addassignmentscore?Assignment_id=${assg._id}`, {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        User_id: index,
+                        Assignment_id: assg._id,
+                        final_grade: grade,
+                    }),
+                })
+                .then((res) => res.json())
+                .then((res) => {
+                    console.log(res);
+                    //setIsLoading(false);
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            //setIsLoading(false);
+        }
+    }
+
+    const handleStopAssignment = () => {
+
+        setIsLoading(true);
+        
+        finalGrades.forEach((grade, index) => {
+            finalMarksCal(grade, index);
+        });
+
+        stopPeerLearning();
+        
+        setIsLoading(false);
+
+        setShowStopConfirmation(false);
+    }
 
     return (
         <>
-            {
-                showStopConfirmation ? <div id={styles.popup_wrapper} >
+            {showStopConfirmation ? (
+                <div id={styles.popup_wrapper} >
                     <div id={styles.whole}>
                         <div className={styles.finalize}>
                             <div id={styles.up}>
-                                <p id={styles.submit}>Stop Peer Assignment </p>
+                                <p id={styles.submit}> Stop Peer Assignment </p>
                                 <div id={styles.popup_close} onClick={() => setShowStopConfirmation(false)}> X </div>
                             </div>
-                            <p id={styles.reviews}>Do you want to stop peer assignment ?</p>
+                            {isLoading ? (
+                                <p id={styles.loading}>Wait...</p>
+                            ) : (
+                                <p id={styles.reviews}> Do you want to stop peer assignment ? </p>
+                            )}
                             <div className={styles.option}>
-                                <button id={styles.btn} onClick={(e) => { setShowStopConfirmation(false); stopPeerLearning() }}>Yes</button>
+                                {isLoading ? (
+                                    <button id={styles.btn} disabled>Yes</button>
+                                ) : (
+                                    <button id={styles.btn} onClick={handleStopAssignment}>Yes</button>
+                                )}
                                 <button id={styles.btn1} onClick={() => setShowStopConfirmation(false)}>No</button>
                             </div>
                         </div>
                     </div>
-                </div> : null
-            }
-
+                </div>
+            ) : null}
         </>
     )
+    
+    // return (
+    //     <>
+    //         {
+    //             showStopConfirmation ? <div id={styles.popup_wrapper} >
+    //                 <div id={styles.whole}>
+    //                     <div className={styles.finalize}>
+    //                         <div id={styles.up}>
+    //                             <p id={styles.submit}> Stop Peer Assignment </p>
+    //                             <div id={styles.popup_close} onClick={() => setShowStopConfirmation(false)}> X </div>
+    //                         </div>
+    //                         <p id={styles.reviews}>Do you want to stop peer assignment ?</p>
+    //                         <div className={styles.option}>
+    //                             <button id={styles.btn} onClick={(e) => { setShowStopConfirmation(false); stopPeerLearning() }}>Yes</button>
+    //                             <button id={styles.btn1} onClick={() => setShowStopConfirmation(false)}>No</button>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //             </div> : null
+    //         }
+
+    //     </>
+    // )
 }

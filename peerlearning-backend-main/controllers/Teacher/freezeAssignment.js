@@ -8,7 +8,7 @@ exports.freezeAssignment = async (req, res) => {
     if (err) {
       res.json(err)
     } else {
-      result.isFreeze = True
+      result.isFreeze = true
       result.save((e, r) => {
         if (e) return res.json(e)
         else {

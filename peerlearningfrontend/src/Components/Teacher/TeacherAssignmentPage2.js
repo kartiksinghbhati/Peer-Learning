@@ -47,7 +47,7 @@ const TeacherAssignmentPage2 = () => {
             await fetch(`${API}/api/peer/assignment?peer_assignment_id=${_id}`)
               .then((res) => res.json())
               .then(async (res) => {
-                console.log(res);
+                //console.log(res);
 
                 setStatus(res.status);
                 await fetch(
@@ -70,7 +70,7 @@ const TeacherAssignmentPage2 = () => {
           }
     }
 
-    useEffect(() => { loadData() }, [userData.token, assignment1.status]);
+    useEffect(() => { loadData() }, [userData.token, assignment1]);
 
     const getTeacherReviews = async () => {
         //setUserData((u) => ({ ...u, loader: u.loader + 1 }));
@@ -157,6 +157,30 @@ const TeacherAssignmentPage2 = () => {
 
     useEffect(() => { getTeacherReviews(); }, [role, assignment1._id, activities]);
 
+    const freezeAssignment = async () => {
+        try {
+            if (userData.token) {
+                
+                await fetch(`${API}/api/freezeassignment?peer_assignment_id=${_id}`, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                  body: JSON.stringify({
+                    peer_assignment_id: _id,
+                  }),
+                })
+                  .then((res) => res.json())
+                  .then((res) => {
+                    console.log(res);
+                  });
+              }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+    }
+
     const stopPeerLearning = async () => {
         setSpin1(true);
         setSpin2(true);
@@ -193,7 +217,7 @@ const TeacherAssignmentPage2 = () => {
             :   <div className="dashboard">
                     <div className="contain">
                         {  
-                            status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning}/>
+                            status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning} freezeAssignment={freezeAssignment}/>
                             : <TeacherAssignmentView2 assg={assignment1} /> 
                         }
                     </div>
