@@ -29,8 +29,8 @@ require('dotenv').config()
 
 // database connection
 mongoose.connect(
-  config.db.DB_URI,
-  //process.env.DATABASE_URL,
+  //config.db.DB_URI,
+  process.env.DATABASE_URL,
   {
     useFindAndModify: false,
     useUnifiedTopology: true,

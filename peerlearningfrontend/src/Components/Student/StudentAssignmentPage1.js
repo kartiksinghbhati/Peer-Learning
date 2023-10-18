@@ -3,7 +3,6 @@ import AuthContext from "../../AuthContext";
 import { G_API } from "../../config";
 import styles from './StudentAssignmentPage1.module.css';
 import { ReactComponent as AssignmentIcon } from "./Assests/Assignment.svg";
-import { ReactComponent as MoreIcon } from "./Assests/more.svg";
 import { ReactComponent as Line } from "./Assests/Line.svg";
 import Thumbnail from "./Assests/thumbnail.png";
 import People from "./Assests/People.svg";
@@ -26,7 +25,6 @@ function StudentAssignmentPage1() {
         })
             .then((res) => res.json())
             .then((res) => {
-                // console.log(res.teachers);
                 var len = res.teachers.length;
                 for (var i = 0; i < len; i++) {
                     if (res.teachers[i].userId == assignment.creatorUserId) {
@@ -133,14 +131,10 @@ function StudentAssignmentPage1() {
                                         <img id={styles.thumbnail1} src={Thumbnail} />
                                         <div id={styles.written}>
                                             <p id={styles.ques}>No Question Paper Uploaded</p>
-                                            {/* <p id={styles.type}>PDF</p> */}
                                         </div>
                                     </div>
                                 }
                             </div>
-                            {/* <div className={styles.moreIcon}>
-                                <MoreIcon />
-                            </div> */}
                         </div>
                         <div className={styles.pdfDiv}>
                             <div className={styles.upper}>

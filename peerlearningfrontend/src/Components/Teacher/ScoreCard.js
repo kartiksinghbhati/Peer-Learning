@@ -20,6 +20,8 @@ const Card = (props) => {
 
   const { userData } = useContext(AuthContext);
 
+  //console.log(props.data);
+
   const [score, setScore] = useState(0);
   const [editingRow, setEditingRow] = useState(-1);
   const [newMarks, setNewMarks] = useState('');

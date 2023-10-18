@@ -12,51 +12,52 @@ import Spinner from "../Spinner/Spinner";
 import StopPeerLearningPopup from "../Popups/StopPeerLearningPopup";
 import FreezeAssignmentPopup from "../Popups/FreezeAssignmentPopup";
 
-function conversion(hours, minutes) {
-  var t;
-  var h = hours + 5;
-  var m = minutes + 30;
-  if (m >= 60) {
-    h = h + 1;
-    m = 60 - m;
-  }
-  if (m < 10) {
-    m = "0" + m;
-  }
-  if (h >= 24)
-    h = h - 24;
-  if (h >= 12) {
-    t = 'PM';
-    if (h > 12)
-      h = h - 12;
-  }
-  else {
-    t = 'AM';
-    if (h < 10) {
-      h = "0" + h;
-    }
-  }
-  return h + ":" + m + " " + t;
-}
-function none(hours) {
-  var t;
-  var h = hours + 5;
-  var m = 30;
-  if (h >= 24)
-    h = h - 24;
-  if (h >= 12) {
-    t = 'PM';
-    if (h > 12)
-      h = h - 12;
-  }
-  else {
-    t = 'AM';
-    if (h < 10) {
-      h = "0" + h;
-    }
-  }
-  return h + ":" + m + " " + t;
-}
+// function conversion(hours, minutes) {
+//   var t;
+//   var h = hours + 5;
+//   var m = minutes + 30;
+//   if (m >= 60) {
+//     h = h + 1;
+//     m = 60 - m;
+//   }
+//   if (m < 10) {
+//     m = "0" + m;
+//   }
+//   if (h >= 24)
+//     h = h - 24;
+//   if (h >= 12) {
+//     t = 'PM';
+//     if (h > 12)
+//       h = h - 12;
+//   }
+//   else {
+//     t = 'AM';
+//     if (h < 10) {
+//       h = "0" + h;
+//     }
+//   }
+//   return h + ":" + m + " " + t;
+// }
+// function none(hours) {
+//   var t;
+//   var h = hours + 5;
+//   var m = 30;
+//   if (h >= 24)
+//     h = h - 24;
+//   if (h >= 12) {
+//     t = 'PM';
+//     if (h > 12)
+//       h = h - 12;
+//   }
+//   else {
+//     t = 'AM';
+//     if (h < 10) {
+//       h = "0" + h;
+//     }
+//   }
+//   return h + ":" + m + " " + t;
+// }
+
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function bufferMarksCal(marks, tolerance) {
@@ -90,29 +91,7 @@ function compareMarks(row, bufferMarks) {
   return flag;
 }
 
-// function finalGradeCal(activities) {
-
-//   let finalGrades = [];
-  
-//   activities.forEach((s) => {
-//     if(s.length>1){
-//       let grades = 0;
-//       for (let i = 1; i < s.length; i++) {
-//         let score = s[i].review_score;
-//         for(let j = 0; j < score.length; j++){
-//           grades = grades + score[j];
-//         }
-//       }
-//       finalGrades[s[0].userId] = [grades];
-//     }
-    
-//   });
-
-//   //console.log(finalGrades);
-//   return finalGrades;
-// }
-
-export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount, stopPeerLearning, freezeAssignment}) {
+export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount, stopPeerLearning, freezeAssignment, finalGrades, setFinalGrades}) {
    //console.log(assg);
   //console.log(activities);
 
@@ -121,7 +100,6 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
   const _id = assignment._id;
 
   const bufferMarks = bufferMarksCal(marks, assg.tolerance);
-  let finalGrades = [];
 
   var i = 200;
   var j = 1000;
@@ -327,7 +305,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
         freezeAssignment={freezeAssignment} 
         showFreezeConfirmation={showFreezeConfirmation} 
         setShowFreezeConfirmation={setShowFreezeConfirmation} 
-        finalGrades={finalGrades}
+        setFinalGrades={setFinalGrades}
       />
 
     </>

@@ -175,3 +175,46 @@
 .bottom{
   width: 100%;
 }
+
+
+/* Table CSS */
+.studentList {
+  width: 95%;
+  margin-left: 35px;
+  border-collapse: collapse;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+}
+
+.studentList th {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+.studentList th,
+.studentList td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.studentList .noSubmission {
+  color: black;
+}
+
+.studentFullName {
+  color : blue;
+  font-weight: bold;
+  display: inline;
+}
+
+.emptyScore {
+  color: red;
+  font-weight: bold;
+}
+
+.nonEmptyScore {
+  color: rgb(58, 248, 58);
+  font-weight: bold;
+}

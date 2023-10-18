@@ -8,86 +8,104 @@ import thumbnail from "../Student/Assests/thumbnail.png";
 import bottom from "../Images/Bottom.png";
 import styles from "./TeacherAssignmentView2.module.css";
 import Spinner from "../Spinner/Spinner";
+import ReleaseScorePopup from "../Popups/ReleaseScorePopup";
+import { ScoreCard } from "./ScoreCard";
 
-function conversion(hours, minutes) {
-    var t;
-    var h = hours + 5;
-    var m = minutes + 30;
-    if (m >= 60) {
-        h = h + 1;
-        m = 60 - m;
-    }
-    if (m < 10) {
-        m = "0" + m;
-    }
-    if (h >= 24)
-        h = h - 24;
-    if (h >= 12) {
-        t = 'PM';
-        if (h > 12)
-            h = h - 12;
-    }
-    else {
-        t = 'AM';
-        if (h < 10) {
-            h = "0" + h;
-        }
-    }
-    return h + ":" + m + " " + t;
-}
-function none(hours) {
-    var t;
-    var h = hours + 5;
-    var m = 30;
-    if (h >= 24)
-        h = h - 24;
-    if (h >= 12) {
-        t = 'PM';
-        if (h > 12)
-            h = h - 12;
-    }
-    else {
-        t = 'AM';
-        if (h < 10) {
-            h = "0" + h;
-        }
-    }
-    return h + ":" + m + " " + t;
-}
+// function conversion(hours, minutes) {
+//     var t;
+//     var h = hours + 5;
+//     var m = minutes + 30;
+//     if (m >= 60) {
+//         h = h + 1;
+//         m = 60 - m;
+//     }
+//     if (m < 10) {
+//         m = "0" + m;
+//     }
+//     if (h >= 24)
+//         h = h - 24;
+//     if (h >= 12) {
+//         t = 'PM';
+//         if (h > 12)
+//             h = h - 12;
+//     }
+//     else {
+//         t = 'AM';
+//         if (h < 10) {
+//             h = "0" + h;
+//         }
+//     }
+//     return h + ":" + m + " " + t;
+// }
+// function none(hours) {
+//     var t;
+//     var h = hours + 5;
+//     var m = 30;
+//     if (h >= 24)
+//         h = h - 24;
+//     if (h >= 12) {
+//         t = 'PM';
+//         if (h > 12)
+//             h = h - 12;
+//     }
+//     else {
+//         t = 'AM';
+//         if (h < 10) {
+//             h = "0" + h;
+//         }
+//     }
+//     return h + ":" + m + " " + t;
+// }
+
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export default function TeacherAssignmentView2({ assg }) {
+export default function TeacherAssignmentView2({ assg, activities, reviewerCount, finalGrades, releaseScore }) {
 
     const { userData } = useContext(AuthContext);
     const [TeacherName, setTeacherName] = useState([]);
     const [spin, setspin] = useState(true);
+    const [showReleaseConfirmation, setShowReleaseConfirmation] = useState(false);
 
     const truncate = (str) => {
         if (str) {
-          return str.length > 60 ? str.substring(0, 59) + "..." : str;
+            return str.length > 60 ? str.substring(0, 59) + "..." : str;
         }
     }
 
-    const loadData = async () =>{
+    let formattedDeadline = "";
+    if(assg.reviewer_deadline !== undefined){
+      const deadlineDate = new Date(assg.reviewer_deadline);
+      const options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      };
+      formattedDeadline = deadlineDate.toLocaleDateString('en-US', options);
+    }
+
+    const loadData = async () => {
 
         if (userData.token) {
-          await fetch(`${G_API}/courses/${assg.courseId}/teachers`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${userData.token}`,
-            },
-          })
-            .then((res) => res.json())
-            .then((res) => {
-                var len = res.teachers.length;
-                for (var i = 0; i < len; i++) {
-                    if (res.teachers[i].userId == assg.creatorUserId) {
-                        var g = i;
+            await fetch(`${G_API}/courses/${assg.courseId}/teachers`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${userData.token}`,
+                },
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    var len = res.teachers.length;
+                    for (var i = 0; i < len; i++) {
+                        if (res.teachers[i].userId == assg.creatorUserId) {
+                            var g = i;
+                        }
                     }
-                }
-                setTeacherName(res.teachers[g].profile.name.fullName);
-                setspin(false);
-            });
+                    setTeacherName(res.teachers[g].profile.name.fullName);
+                    setspin(false);
+                });
         }
     }
 
@@ -108,7 +126,7 @@ export default function TeacherAssignmentView2({ assg }) {
                                 <div className={styles.pointsanddue}>
                                     {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Ungraded</p>}
                                     <div className={styles.duediv}>
-                                    {assg.dueDate ? <p className={styles.due}>Due {assg.dueDate.day}/{assg.dueDate.month}/{assg.dueDate.year}, {assg.dueTime.minutes ? conversion(assg.dueTime.hours, assg.dueTime.minutes) : none(assg.dueTime.hours)} </p> : <p className={styles.due}>No Due Date</p>}
+                                    {assg.reviewer_deadline ? <p className={styles.due}>Due {formattedDeadline} </p> : <p className={styles.due}>No Due Date</p>}
                                     </div>
                                 </div>
                                 <Line className={styles.line} />
@@ -127,25 +145,89 @@ export default function TeacherAssignmentView2({ assg }) {
                                         <img id={styles.thumbnail1} src={thumbnail} />
                                         <div id={styles.written}>
                                             <p id={styles.ques}>No Question Paper Uploaded</p>
-                                            {/* <p id={styles.type}>PDF</p> */}
                                         </div>
                                     </div>
                                 }
                             </div>
-                            {/* <div className={styles.moreIcon}>
-                                <MoreIcon />
-                            </div> */}
                         </div>
                         <div className={styles.pdfDiv}>
                             <button className={styles.btn1}>Check for Abnormalities </button>
                             <button className={styles.btn2}>View student Reviews</button>
-                            <button className={styles.btn3}>Release Scores </button>
+                            <button className={styles.btn3} onClick={() => setShowReleaseConfirmation(true)} >Release Scores </button>
                             <button className={styles.btn4}>View detailed Analytics </button>
                             <button className={styles.btn5}>Peer Learning activity completed </button>
                         </div>
                     </div>
+
+                    {activities.length > 0 && assg.status !== "Added" && (
+                        <>
+                            <p className={styles.studentSubmissions}> Student Submissions </p>
+
+                            <table className={styles.studentList}>
+
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+
+                                        <th>Final Grades</th>
+
+                                        {Array(reviewerCount)
+                                            .fill(0)
+                                            .map((_, i) => (
+                                                <th key={`reviewer-${i}`}>Reviewer {i + 1}</th>
+                                            ))}
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {activities.map((row, index) => {
+
+                                        return (
+                                            <tr key={row.name}>
+                                                <td>
+                                                    <div className={styles.studentFullName}>{row[0].profile.name.fullName}</div>
+                                                </td>
+
+                                                <td>
+                                                    <div className={styles.studentFullName}>{finalGrades[row[0].userId]}</div>
+                                                </td>
+
+                                                {row.slice(1).map((r) => {
+                                                    const isDataEmpty = r.review_score.length === 0;
+
+
+                                                    const tdClassName = isDataEmpty ? styles.emptyScore : styles.nonEmptyScore;
+
+                                                    return (
+                                                        <td key={r.name.fullName}>
+                                                            <ScoreCard data={r} questions={assg.total_questions}>
+                                                                <div className={tdClassName}>{r.name.fullName}</div>
+                                                            </ScoreCard>
+                                                        </td>
+                                                    );
+                                                })}
+
+                                                {row.length === 1 && (
+                                                    <>
+                                                        {Array(reviewerCount).fill(0).map((_, i) => (
+                                                            <td key={`no-submission-${i}`} className={styles.noSubmission}>
+                                                                No Submission
+                                                            </td>
+                                                        ))}
+                                                    </>
+                                                )}
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </>
+                    )}
+
                 </div>}
             {<img src={bottom} alt="Image" className={styles.bottom} />}
+
+            <ReleaseScorePopup releaseScore={releaseScore} showReleaseConfirmation={showReleaseConfirmation} setShowReleaseConfirmation={setShowReleaseConfirmation}/>
         </>
     );
 }

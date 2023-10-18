@@ -2,13 +2,13 @@ import React, { useContext, useState } from "react";
 import styles from "./FinalisePop.module.css";
 
 
-export default function FreezeAssignmentPopup({ activities, freezeAssignment, showFreezeConfirmation, setShowFreezeConfirmation, finalGrades }) {
+export default function FreezeAssignmentPopup({ activities, freezeAssignment, showFreezeConfirmation, setShowFreezeConfirmation, setFinalGrades}) {
     
     const [isLoading, setIsLoading] = useState(false);
 
     function finalGradeCal(activities) {
 
-        let finalGrades = [];
+        let final_grades = [];
         
         activities.forEach((s) => {
           if(s.length>1){
@@ -19,19 +19,19 @@ export default function FreezeAssignmentPopup({ activities, freezeAssignment, sh
                 grades = grades + score[j];
               }
             }
-            let avgGrades = grades/((s.length-1)*s[1].review_score); 
-            finalGrades[s[0].userId] = [avgGrades];
+            let avgGrades = grades/(s.length-1); 
+            final_grades[s[0].userId] = parseFloat(avgGrades.toFixed(2));
           }
           
         });
 
-        return finalGrades;
-      }
+        return final_grades;
+    }
 
     const handleFreezeAssignment = () => {
 
         setIsLoading(true);
-        finalGrades = finalGradeCal(activities);
+        setFinalGrades(finalGradeCal(activities));
         freezeAssignment();
         setIsLoading(false);
         setShowFreezeConfirmation(false);

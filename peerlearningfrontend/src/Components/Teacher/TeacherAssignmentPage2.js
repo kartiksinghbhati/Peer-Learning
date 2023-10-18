@@ -13,32 +13,18 @@ const TeacherAssignmentPage2 = () => {
 
     const _id = assignment._id;
     const course_id = assignment.course_id;
+    const assignmentID = assignment.assignment_id;
 
     const [assignment1, setAssignment1] = useState([]); //for storing info about the assignment fetched from both classroom and peer learning
-    //const [assignment2, setAssignment2] = useState({});
     const [activities, setActivities] = useState([]); //for storing info about a student and their reviewers info with marks and comments
-    //const [self, setSelf] = useState({});
     const [mail, setMail] = useState("");
     const [reviewerCount, setReviewerCount] = useState(0);
     const [marks, setMarks] = useState([]); //for storing marks matrix
     const [spin1, setSpin1] = useState(true);
     const [spin2, setSpin2] = useState(true);
     const [status, setStatus] = useState("");
+    const [finalGrades, setFinalGrades] = useState([]);
 
-
-    // const currentDate = new Date();
-    // // Specify your deadline year, month, day, hour, and minute values
-    // const deadlineYear = assignment.dueDate.year;
-    // const deadlineMonth = assignment.dueDate.month;
-    // const deadlineDay = assignment.dueDate.day;
-    // const deadlineHour = assignment.dueTime.hours;
-    // const deadlineMinutes = assignment.dueTime.minutes;
-
-    // // Create the deadline date objects
-    // const deadlineDate = new Date(deadlineYear, deadlineMonth - 1, deadlineDay, deadlineHour, deadlineMinutes); // Subtract 1 from the month because it's zero-based
-    
-    // // Compare the current date with the deadline date
-    // const isDeadlinePassed = currentDate > deadlineDate;
 
 
     const loadData = async () =>{
@@ -47,7 +33,8 @@ const TeacherAssignmentPage2 = () => {
             await fetch(`${API}/api/peer/assignment?peer_assignment_id=${_id}`)
               .then((res) => res.json())
               .then(async (res) => {
-                //console.log(res);
+                // console.log("res");
+                // console.log(res);
 
                 setStatus(res.status);
                 await fetch(
@@ -61,7 +48,8 @@ const TeacherAssignmentPage2 = () => {
                 )
                   .then((r) => r.json())
                   .then((r) => {
-                    //console.log(r);
+                    // console.log("r");
+                    // console.log(r);
                     setAssignment1({ ...res, ...r }); 
                     setMarks(res.max_marks_per_question);
                     setSpin1(false);
@@ -89,6 +77,8 @@ const TeacherAssignmentPage2 = () => {
                 )
                 .then((r) => r.json())
                 .then((r) => {
+
+                  
                     setUserData((u) => ({ ...u, loader: u.loader - 1 }));
                 
                     
@@ -199,7 +189,6 @@ const TeacherAssignmentPage2 = () => {
                 })
                   .then((res) => res.json())
                   .then((res) => {
-                    //console.log(res);
                     setStatus(res);
                   });
 
@@ -211,19 +200,63 @@ const TeacherAssignmentPage2 = () => {
           }
     }
 
-    return (
-        <>
-        {spin1 && spin2 ? <Spinner/>
-            :   <div className="dashboard">
-                    <div className="contain">
-                        {  
-                            status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning} freezeAssignment={freezeAssignment}/>
-                            : <TeacherAssignmentView2 assg={assignment1} /> 
-                        }
-                    </div>
-                </div>
+
+    const releaseScore = async () => {
+      try {
+          if (userData.token) {
+
+            await fetch(`${G_API}/courses/${course_id}/courseWork/${assignmentID}/studentSubmissions`, {
+              method: "GET",
+              headers: {
+                  Authorization: `Bearer ${userData.token}`,
+              },
+              })
+                .then((res) => res.json())
+                .then((res) => {
+                  console.log(res);
+
+                  const studentSubmissionsArray = Object.values(res.studentSubmissions);
+
+                  studentSubmissionsArray.forEach(async ( sub ) => {
+
+                    await fetch(`${G_API}/courses/${course_id}/courseWork/${assignmentID}/studentSubmissions/${sub.id}?updateMask=assignedGrade`, {
+                      method: "PATCH",
+                      headers: {
+                          Authorization: `Bearer ${userData.token}`,
+                          Accept: "application/json",
+                          "Content-Type": "application/json",
+                      },
+                        body: JSON.stringify({
+                          
+                          assignedGrade : finalGrades[sub.userId],
+                        }),
+                      })
+                        .then((res) => res.json())
+                        .then((res) => {
+                          console.log(res);
+                        });
+                  });
+
+                });
+          }
+        } catch (error) {
+          console.error('Error:', error);
         }
-        </>
+  }
+
+    return (
+      <>
+        {spin1 && spin2 ? <Spinner />
+          : <div className="dashboard">
+            <div className="contain">
+              {
+                status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning} freezeAssignment={freezeAssignment} finalGrades={finalGrades} setFinalGrades={setFinalGrades}/>
+                  : <TeacherAssignmentView2 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} finalGrades={finalGrades} releaseScore={releaseScore} />
+              }
+            </div>
+          </div>
+        }
+      </>
     );
 };
 

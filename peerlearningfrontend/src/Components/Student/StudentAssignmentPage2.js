@@ -114,61 +114,6 @@ const StudentAssignmentPage2 = () => {
         }        
     }, [role, assignment1._id, assignment1.status]);
 
-
-    const stopPeerLearning = async () => {
-      try {
-          if (userData.token) {
-              await fetch(`${API}/api/closeassignment?peer_assignment_id=${_id}`, {
-              method: "POST",
-              headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-              },
-                body: JSON.stringify({
-                  peer_assignment_id: _id,
-                }),
-              })
-                .then((res) => res.json())
-                .then((res) => {
-                    //alert("Peer Review Stoped");
-                });
-            }
-        } catch (error) {
-          console.error('Error:', error);
-        }
-  }
-
-    
-  // if(isDeadlinePassed){
-  //   stopPeerLearning();
-  //     return (
-  //         <>
-  //         {spin1 && spin2 ? <Spinner/>
-  //             :   <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities} youractivities={youractivities} setyourActivities={setyourActivities}/>
-  //         }
-  //         </>
-  //     );
-  // }
-  // else{
-  //   return (
-  //     <>
-  //     {spin1 && spin2 ? <Spinner/>
-  //         :   <div className="dashboard">
-  //                 <div className="contain">
-  //                     {  role === "student" ?
-                              
-  //                              assignment1.status === "Assigned" ? <StudentAssignmentView1 assg={assignment1}  self={self} activities={activities} marks={marks} setSelf={setSelf} setActivities={setActivities} />
-  //                              : <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities} youractivities={youractivities} setyourActivities={setyourActivities}/>
-  //                         : null
-  //                     }
-  //                 </div>
-  //             </div>
-  //     }
-  //     </>
-  //   );
-  // }
-
-
     return (
         <>
         {spin1 && spin2 ? <Spinner/>
