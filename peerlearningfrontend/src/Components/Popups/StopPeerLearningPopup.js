@@ -8,49 +8,75 @@ export default function StopPeerLearningPopup({ assg, finalGrades, stopPeerLearn
     const { userData } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(false);
     
-    const finalMarksCal = async (grade, index) => {
-        try {
-            if (userData.token) {
-                //setIsLoading(true);
+    // const finalMarksCal = async (grade, index) => {
+    //     try {
+    //         console.log("bbbbb");
+    //         if (userData.token) {
+    //             console.log("aaaaaa");
 
-                await fetch(`${API}/api/addassignmentscore?Assignment_id=${assg._id}`, {
-                    method: "POST",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        User_id: index,
-                        Assignment_id: assg._id,
-                        final_grade: grade,
-                    }),
-                })
-                .then((res) => res.json())
-                .then((res) => {
-                    console.log(res);
-                    //setIsLoading(false);
-                });
-            }
+    //             await fetch(`${API}/api/addassignmentscore?Assignment_id=${assg._id}`, {
+    //                 method: "POST",
+    //                 headers: {
+    //                     Accept: "application/json",
+    //                     "Content-Type": "application/json",
+    //                 },
+    //                 body: JSON.stringify({
+    //                     User_id: index,
+    //                     Assignment_id: assg._id,
+    //                     final_grade: grade,
+    //                 }),
+    //             })
+    //             .then((res) => res.json())
+    //             .then((res) => {
+    //                 console.log("final grades to db");
+    //                 console.log(res);
+                    
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.error('Error:', error);
+            
+    //     }
+    // }
+
+    const handleStopAssignment =  () => {
+        setIsLoading(true);
+    
+        try {
+            // Use Promise.all to wait for all async operations to complete
+            //await Promise.all(finalGrades.map((grade, index) => finalMarksCal(grade, index)));
+    
+            // All requests are completed here
+            stopPeerLearning();
+            setShowStopConfirmation(false);
         } catch (error) {
             console.error('Error:', error);
-            //setIsLoading(false);
+        } finally {
+            setIsLoading(false);
         }
     }
+    
 
-    const handleStopAssignment = () => {
+    // const handleStopAssignment = () => {
 
-        setIsLoading(true);
+    //     setIsLoading(true);
         
-        finalGrades.forEach((grade, index) => {
-            finalMarksCal(grade, index);
-        });
+    //      console.log("before");
 
-        stopPeerLearning();
+    //     console.log(finalGrades);
+
+    //     finalGrades.forEach((grade, index) => {
+    //         finalMarksCal(grade, index);
+    //     });
+
+    //      console.log("after");
+
+    //     stopPeerLearning();
         
-        setIsLoading(false);
+    //     setIsLoading(false);
 
-        setShowStopConfirmation(false);
-    }
+    //     setShowStopConfirmation(false);
+    // }
 
     return (
         <>

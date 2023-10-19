@@ -91,8 +91,8 @@ function compareMarks(row, bufferMarks) {
   return flag;
 }
 
-export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount, stopPeerLearning, freezeAssignment, finalGrades, setFinalGrades}) {
-   //console.log(assg);
+export default function TeacherAssignmentView1({ assg, activities, marks, reviewerCount, stopPeerLearning, freezeAssignment }) {
+  //console.log(assg);
   //console.log(activities);
 
 
@@ -101,6 +101,10 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
 
   const bufferMarks = bufferMarksCal(marks, assg.tolerance);
 
+  const myActivities = activities;
+
+  //console.log(myActivities);
+
   var i = 200;
   var j = 1000;
   const data = [
@@ -108,7 +112,9 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
     { name: 'In-Progress', students: 200, fill: "rgba(255, 206, 86, 0.3)" },
     { name: 'Not-Started', students: j, fill: "rgba(255, 99, 132, 0.4)" },
   ];
+
   const [TeacherName, setTeacherName] = useState([]);
+  const [finalGrades, setFinalGrades] = useState([]);
   const [spin, setspin] = useState(true);
   const [showFreezeConfirmation, setShowFreezeConfirmation] = useState(false);
   const [showStopConfirmation, setShowStopConfirmation] = useState(false);
@@ -122,7 +128,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
 
 
   let formattedDeadline = "";
-  if(assg.reviewer_deadline !== undefined){
+  if (assg.reviewer_deadline !== undefined) {
     const deadlineDate = new Date(assg.reviewer_deadline);
     const options = {
       day: '2-digit',
@@ -134,8 +140,43 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
     };
     formattedDeadline = deadlineDate.toLocaleDateString('en-US', options);
   }
-  
 
+
+  const getMarks = async (activity) => {
+
+    if (userData.token) {
+
+      if(activity.length>1){
+
+        await fetch(`${API}/api/assignmentscore?User_id=${activity[0].userId}&Assignment_id=${assg._id}`)
+        .then((res) => res.json())
+        .then((res) => {
+          //console.log(res);
+
+          if (res.length > 0) {
+            const userId = activity[0].userId;
+            const marks = res[0].final_grade;
+            
+            setFinalGrades((prevGrades) => ({
+              ...prevGrades, 
+              [userId]: marks,
+            }));
+          }
+        });
+
+      }
+      else{
+
+        setFinalGrades((prevGrades) => ({
+          ...prevGrades, 
+          [activity[0].userId]: 0,
+        }));
+
+      }
+
+    }
+  }
+  
   const loadData = async () => {
 
     if (userData.token) {
@@ -154,12 +195,21 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
             }
           }
           setTeacherName(res.teachers[g].profile.name.fullName);
-          setspin(false);
+          
         });
+
+        await Promise.all(activities.map(activity => getMarks(activity)));
+
+        
+
+        setspin(false);
+
     }
   }
 
-  useEffect(() => { loadData() }, [userData.token, assg]);
+  useEffect(() => { loadData() }, [userData.token, assg, activities]);
+
+  //useEffect(() => { getMarks() }, [userData.token]);
 
   const sortedActivities = activities.slice().sort((a, b) => {
     const flagA = compareMarks(a, bufferMarks);
@@ -226,17 +276,17 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                 <thead>
                   <tr>
                     <th>Student Name</th>
-                    
-                    {assg.isFreeze && ( <th>Final Grades</th> )}
+
+                    {assg.isFreeze && (<th>Final Grades</th>)}
 
                     {Array(reviewerCount)
                       .fill(0)
                       .map((_, i) => (
                         <th key={`reviewer-${i}`}>Reviewer {i + 1}</th>
-                    ))}
+                      ))}
                   </tr>
                 </thead>
-                
+
                 <tbody>
                   {sortedActivities.map((row, index) => {
 
@@ -260,12 +310,12 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                         {row.slice(1).map((r) => {
                           const isDataEmpty = r.review_score.length === 0;
 
-                         
+
                           const tdClassName = isDataEmpty ? styles.emptyScore : styles.nonEmptyScore;
 
                           return (
                             <td key={r.name.fullName}>
-                              <ScoreCard data={r} questions={assg.total_questions}>
+                              <ScoreCard data={r} questions={assg.total_questions} activities={myActivities} freezeAssignment={freezeAssignment}>
                                 <div className={tdClassName}>{r.name.fullName}</div>
                               </ScoreCard>
                             </td>
@@ -292,19 +342,21 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
         </div>}
       {<img src={bottom} alt="Image" className={styles.bottom} />}
 
-      <StopPeerLearningPopup 
-        assg={assg} 
-        stopPeerLearning={stopPeerLearning} 
-        showStopConfirmation={showStopConfirmation} 
-        setShowStopConfirmation={setShowStopConfirmation} 
+      <StopPeerLearningPopup
+        assg={assg}
+        stopPeerLearning={stopPeerLearning}
+        showStopConfirmation={showStopConfirmation}
+        setShowStopConfirmation={setShowStopConfirmation}
         finalGrades={finalGrades}
       />
 
-      <FreezeAssignmentPopup 
-        activities={activities} 
-        freezeAssignment={freezeAssignment} 
-        showFreezeConfirmation={showFreezeConfirmation} 
-        setShowFreezeConfirmation={setShowFreezeConfirmation} 
+      <FreezeAssignmentPopup
+        assg={assg}
+        activities={activities}
+        freezeAssignment={freezeAssignment}
+        showFreezeConfirmation={showFreezeConfirmation}
+        setShowFreezeConfirmation={setShowFreezeConfirmation}
+        finalGrades={finalGrades}
         setFinalGrades={setFinalGrades}
       />
 

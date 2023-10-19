@@ -23,7 +23,7 @@ const TeacherAssignmentPage2 = () => {
     const [spin1, setSpin1] = useState(true);
     const [spin2, setSpin2] = useState(true);
     const [status, setStatus] = useState("");
-    const [finalGrades, setFinalGrades] = useState([]);
+    // const [finalGrades, setFinalGrades] = useState([]);
 
 
 
@@ -163,7 +163,7 @@ const TeacherAssignmentPage2 = () => {
                 })
                   .then((res) => res.json())
                   .then((res) => {
-                    console.log(res);
+                    //console.log(res);
                   });
               }
           } catch (error) {
@@ -201,48 +201,7 @@ const TeacherAssignmentPage2 = () => {
     }
 
 
-    const releaseScore = async () => {
-      try {
-          if (userData.token) {
-
-            await fetch(`${G_API}/courses/${course_id}/courseWork/${assignmentID}/studentSubmissions`, {
-              method: "GET",
-              headers: {
-                  Authorization: `Bearer ${userData.token}`,
-              },
-              })
-                .then((res) => res.json())
-                .then((res) => {
-                  console.log(res);
-
-                  const studentSubmissionsArray = Object.values(res.studentSubmissions);
-
-                  studentSubmissionsArray.forEach(async ( sub ) => {
-
-                    await fetch(`${G_API}/courses/${course_id}/courseWork/${assignmentID}/studentSubmissions/${sub.id}?updateMask=assignedGrade`, {
-                      method: "PATCH",
-                      headers: {
-                          Authorization: `Bearer ${userData.token}`,
-                          Accept: "application/json",
-                          "Content-Type": "application/json",
-                      },
-                        body: JSON.stringify({
-                          
-                          assignedGrade : finalGrades[sub.userId],
-                        }),
-                      })
-                        .then((res) => res.json())
-                        .then((res) => {
-                          console.log(res);
-                        });
-                  });
-
-                });
-          }
-        } catch (error) {
-          console.error('Error:', error);
-        }
-  }
+    
 
     return (
       <>
@@ -250,8 +209,8 @@ const TeacherAssignmentPage2 = () => {
           : <div className="dashboard">
             <div className="contain">
               {
-                status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning} freezeAssignment={freezeAssignment} finalGrades={finalGrades} setFinalGrades={setFinalGrades}/>
-                  : <TeacherAssignmentView2 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} finalGrades={finalGrades} releaseScore={releaseScore} />
+                status === "Assigned" ? <TeacherAssignmentView1 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} stopPeerLearning={stopPeerLearning} freezeAssignment={freezeAssignment}/>
+                  : <TeacherAssignmentView2 assg={assignment1} activities={activities} marks={marks} reviewerCount={reviewerCount} freezeAssignment={freezeAssignment}/>
               }
             </div>
           </div>

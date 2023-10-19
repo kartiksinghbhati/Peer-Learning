@@ -24,6 +24,7 @@ const config = require('./config')
 const getyourReviewsRouter = require('./routes/Student/getyourReviews')
 const assignmentScheduler = require('./controllers/Teacher/assignmentScheduler')
 const freezeAssignmentRouter = require('./routes/Teacher/freezeAssignment')
+const updateAssignmentScoreRouter = require('./routes/Teacher/update_assignment_score')
 
 require('dotenv').config()
 
@@ -42,7 +43,6 @@ mongoose.connect(
     console.log('Connected to MongoDB Atlas!')
   }
 )
-
 
 const app = express()
 app.use(cors())
@@ -74,14 +74,13 @@ app.use('/api/yourreviews', getyourReviewsRouter) // get student reviews given b
 app.use('/api/deleteassignment', deleteAssignmentRouter) // delete given peer_assignment_id
 app.use('/api/addassignmentscore', addAssignmentScoreRouter) // add assignment score for giver user_id
 app.use('/api/assignmentscore', getAssignmentScoreRouter) // get assignment score for given assignment_id
+app.use('/api/updatescore', updateAssignmentScoreRouter) //update student score(marks)
 app.use('/api/', plotRouter) // get all plot from plot1 to plot10
 const PORT = process.env.PORT || 8000
 
 app.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}`)
 })
-//assignmentScheduler.start();
-
 
 // const express = require('express')
 // const bodyParser = require('body-parser')
@@ -98,7 +97,6 @@ app.listen(PORT, function () {
 // const getIssuesRouter = require('./routes/Teacher/getIssues')
 // const addIssueRouter = require('./routes/Student/addIssue')
 // const closeAssignmentRouter = require('./routes/Teacher/closeAssignment')
-// const assignmentScheduler = require('./controllers/Teacher/assignmentSchedular')
 // const downloadRouter = require('./routes/Teacher/download')
 // const getLogsRouter = require('./routes/Teacher/getlogs')
 // const getReviewsRouter = require('./routes/Student/getReviews')
@@ -108,12 +106,15 @@ app.listen(PORT, function () {
 // const plotRouter = require('./routes/Analytics/Routes')
 // const config = require('./config')
 // const getyourReviewsRouter = require('./routes/Student/getyourReviews')
+// const assignmentScheduler = require('./controllers/Teacher/assignmentScheduler')
+// const freezeAssignmentRouter = require('./routes/Teacher/freezeAssignment')
 
 // require('dotenv').config()
 
 // // database connection
 // mongoose.connect(
-//   config.db.DB_URI,
+//   //config.db.DB_URI,
+//   process.env.DATABASE_URL,
 //   {
 //     useFindAndModify: false,
 //     useUnifiedTopology: true,
@@ -125,6 +126,7 @@ app.listen(PORT, function () {
 //     console.log('Connected to MongoDB Atlas!')
 //   }
 // )
+
 
 // const app = express()
 // app.use(cors())
@@ -143,11 +145,12 @@ app.listen(PORT, function () {
 // app.use('/api/peer', peerAssignmentRouter) //get detailed information on that peer assignment
 // app.use('/api/assignreviewers', assignReviewersRouter) // start peer learning on an assignment
 // app.use('/api/reviewerassignments', reviewerAssignmentsRouter) // get all peer activities assigned to a reviewer for given course_work_id
-// app.use('/api/reviewassignment', reviewAssignmentRouter) // add review of the reviewer on the given peer_activity_id
+// app.use('/api/reviewassignment', reviewAssignmentRouter) // add review(give marks) of the reviewer on the given peer_activity_id
 // app.use('/api/activities', activitiesRouter) // get list of all assigned assignments(activities) on given course_work_id
 // app.use('/api/issues', getIssuesRouter) // get all issues on given peer_assignment_id
 // app.use('/api/issue', addIssueRouter) // add new issue to the respective peer_activity_id
 // app.use('/api/closeassignment', closeAssignmentRouter) // change status of the peer assignment to 'Grading'
+// app.use('/api/freezeassignment', freezeAssignmentRouter) // change status of the peer assignment to 'freeze'
 // app.use('/api/download', downloadRouter) // download score sheet (for Teachers)
 // app.use('/api/logs', getLogsRouter) // download logs
 // app.use('/api/reviews', getReviewsRouter) // get all reviews on the student dashboard
@@ -161,5 +164,3 @@ app.listen(PORT, function () {
 // app.listen(PORT, function () {
 //   console.log(`Server is running on port ${PORT}`)
 // })
-
-// assignmentScheduler.start();

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { G_API } from "../../config";
+import { G_API, API } from "../../config";
 import AuthContext from "../../AuthContext";
 import { ReactComponent as AssignmentIcon } from "./Assests/Assignment.svg";
 import { ReactComponent as MoreIcon } from "./Assests/more.svg";
@@ -59,12 +59,16 @@ import { ScoreCard } from "./ScoreCard";
 
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export default function TeacherAssignmentView2({ assg, activities, reviewerCount, finalGrades, releaseScore }) {
+export default function TeacherAssignmentView2({ assg, activities, reviewerCount, freezeAssignment }) {
 
     const { userData } = useContext(AuthContext);
     const [TeacherName, setTeacherName] = useState([]);
+    const [finalGrades, setFinalGrades] = useState([]);
     const [spin, setspin] = useState(true);
     const [showReleaseConfirmation, setShowReleaseConfirmation] = useState(false);
+
+    const course_id = assg.course_id;
+    const myActivities = activities;
 
     const truncate = (str) => {
         if (str) {
@@ -73,17 +77,53 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
     }
 
     let formattedDeadline = "";
-    if(assg.reviewer_deadline !== undefined){
-      const deadlineDate = new Date(assg.reviewer_deadline);
-      const options = {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-      };
-      formattedDeadline = deadlineDate.toLocaleDateString('en-US', options);
+    if (assg.reviewer_deadline !== undefined) {
+        const deadlineDate = new Date(assg.reviewer_deadline);
+        const options = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        };
+        formattedDeadline = deadlineDate.toLocaleDateString('en-US', options);
+    }
+
+
+    const getMarks = async (activity) => {
+
+        if (userData.token) {
+
+            if (activity.length > 1) {
+
+                await fetch(`${API}/api/assignmentscore?User_id=${activity[0].userId}&Assignment_id=${assg._id}`)
+                    .then((res) => res.json())
+                    .then((res) => {
+                        //console.log(res);
+
+                        if (res.length > 0) {
+                            const userId = activity[0].userId;
+                            const marks = res[0].final_grade;
+
+                            setFinalGrades((prevGrades) => ({
+                                ...prevGrades,
+                                [userId]: marks,
+                            }));
+                        }
+                    });
+
+            }
+            else {
+
+                setFinalGrades((prevGrades) => ({
+                    ...prevGrades,
+                    [activity[0].userId]: 0,
+                }));
+
+            }
+
+        }
     }
 
     const loadData = async () => {
@@ -104,12 +144,66 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
                         }
                     }
                     setTeacherName(res.teachers[g].profile.name.fullName);
-                    setspin(false);
+
                 });
+
+            await Promise.all(activities.map(activity => getMarks(activity)));
+
+
+
+            setspin(false);
         }
     }
 
     useEffect(() => { loadData() }, [userData.token, assg]);
+
+    const releaseScore = async () => {
+
+        alert("releaseScore function called");
+        
+        // try {
+        //     if (userData.token) {
+  
+        //       alert("releaseScore function called");
+  
+        //       await fetch(`${G_API}/courses/${course_id}/courseWork/${assg.assignment_id}/studentSubmissions`, {
+        //         method: "GET",
+        //         headers: {
+        //             Authorization: `Bearer ${userData.token}`,
+        //         },
+        //         })
+        //           .then((res) => res.json())
+        //           .then((res) => {
+        //             console.log(res);
+  
+        //             const studentSubmissionsArray = Object.values(res.studentSubmissions);
+  
+        //             studentSubmissionsArray.forEach(async ( sub ) => {
+  
+        //               await fetch(`${G_API}/courses/${course_id}/courseWork/${assg.assignment_id}/studentSubmissions/${sub.id}?updateMask=assignedGrade`, {
+        //                 method: "PATCH",
+        //                 headers: {
+        //                     Authorization: `Bearer ${userData.token}`,
+        //                     Accept: "application/json",
+        //                     "Content-Type": "application/json",
+        //                 },
+        //                   body: JSON.stringify({
+                            
+        //                     assignedGrade : finalGrades[sub.userId],
+        //                   }),
+        //                 })
+        //                   .then((res) => res.json())
+        //                   .then((res) => {
+        //                     console.log(res);
+        //                   });
+        //             });
+  
+        //           });
+        //     }
+        //   } catch (error) {
+        //     console.error('Error:', error);
+        //   }
+    }
 
     return (
         <>
@@ -126,7 +220,7 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
                                 <div className={styles.pointsanddue}>
                                     {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Ungraded</p>}
                                     <div className={styles.duediv}>
-                                    {assg.reviewer_deadline ? <p className={styles.due}>Due {formattedDeadline} </p> : <p className={styles.due}>No Due Date</p>}
+                                        {assg.reviewer_deadline ? <p className={styles.due}>Due {formattedDeadline} </p> : <p className={styles.due}>No Due Date</p>}
                                     </div>
                                 </div>
                                 <Line className={styles.line} />
@@ -200,7 +294,7 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
 
                                                     return (
                                                         <td key={r.name.fullName}>
-                                                            <ScoreCard data={r} questions={assg.total_questions}>
+                                                            <ScoreCard data={r} questions={assg.total_questions} activities={myActivities} freezeAssignment={freezeAssignment}>
                                                                 <div className={tdClassName}>{r.name.fullName}</div>
                                                             </ScoreCard>
                                                         </td>
@@ -227,7 +321,7 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
                 </div>}
             {<img src={bottom} alt="Image" className={styles.bottom} />}
 
-            <ReleaseScorePopup releaseScore={releaseScore} showReleaseConfirmation={showReleaseConfirmation} setShowReleaseConfirmation={setShowReleaseConfirmation}/>
+            <ReleaseScorePopup releaseScore={releaseScore} showReleaseConfirmation={showReleaseConfirmation} setShowReleaseConfirmation={setShowReleaseConfirmation} />
         </>
     );
 }
