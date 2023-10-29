@@ -160,11 +160,10 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
     const releaseScore = async () => {
 
         alert("releaseScore function called");
-        
+
+        //const updateMask = 'assignedGrade,  draftGrade'; 
         // try {
         //     if (userData.token) {
-  
-        //       alert("releaseScore function called");
   
         //       await fetch(`${G_API}/courses/${course_id}/courseWork/${assg.assignment_id}/studentSubmissions`, {
         //         method: "GET",
@@ -174,13 +173,12 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
         //         })
         //           .then((res) => res.json())
         //           .then((res) => {
-        //             console.log(res);
   
         //             const studentSubmissionsArray = Object.values(res.studentSubmissions);
   
         //             studentSubmissionsArray.forEach(async ( sub ) => {
   
-        //               await fetch(`${G_API}/courses/${course_id}/courseWork/${assg.assignment_id}/studentSubmissions/${sub.id}?updateMask=assignedGrade`, {
+        //               await fetch(`${G_API}/courses/${course_id}/courseWork/${assg.assignment_id}/studentSubmissions/${sub.id}?updateMask=${updateMask}`, {
         //                 method: "PATCH",
         //                 headers: {
         //                     Authorization: `Bearer ${userData.token}`,
@@ -189,7 +187,8 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
         //                 },
         //                   body: JSON.stringify({
                             
-        //                     assignedGrade : finalGrades[sub.userId],
+        //                     assignedGrade : 15,
+        //                     draftGrade : 10,
         //                   }),
         //                 })
         //                   .then((res) => res.json())
