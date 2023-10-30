@@ -249,3 +249,8 @@
   color: rgb(58, 248, 58);
   font-weight: bold;
 }
+
+.Score {
+  color: blue;
+  font-weight: bold;
+}

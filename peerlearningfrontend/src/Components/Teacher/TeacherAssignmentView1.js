@@ -217,6 +217,31 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
     return sortFlaggedStudents ? flagB - flagA : 0;
   });
 
+  const downloadCsvFile = async () => {
+    try {
+      const response = await fetch(`${API}/api/download?peer_assignment_id=${assg._id}&access_token=${userData.token}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${userData.token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Scores_sheet.csv'; // Set the desired file name
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error("Failed to download CSV file");
+      }
+    } catch (error) {
+      console.error("API call error: ", error);
+    }
+  };
+
   return (
     <>
       {spin ? <Spinner /> :
@@ -258,7 +283,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
             </div>
             <div className={styles.pdfDiv}>
               <button className={styles.btn1}>Check for Abnormalities </button>
-              <button className={styles.btn2}>View student Reviews</button>
+              <button className={styles.btn2} onClick={downloadCsvFile}>Download student Reviews</button>
               <button className={styles.btn3} onClick={() => setSortFlaggedStudents(!sortFlaggedStudents)}>Sort Flagged Students</button>
               <button className={styles.btn4} onClick={() => setShowFreezeConfirmation(true)}>Freeze Marks</button>
               <button className={styles.btn5} onClick={() => setShowStopConfirmation(true)}>Stop Peer Learning </button>
@@ -315,8 +340,18 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
 
                           return (
                             <td key={r.name.fullName}>
-                              <ScoreCard data={r} questions={assg.total_questions} activities={myActivities} freezeAssignment={freezeAssignment}>
-                                <div className={tdClassName}>{r.name.fullName}</div>
+                              <ScoreCard
+                                data={r}
+                                questions={assg.total_questions}
+                                activities={myActivities}
+                                freezeAssignment={freezeAssignment}
+                              >
+                                <div className={tdClassName}>
+                                  {r.name.fullName}
+                                </div>
+                                <div className={styles.Score}>
+                                  {" ("+ r.review_score +")"}
+                                </div>
                               </ScoreCard>
                             </td>
                           );

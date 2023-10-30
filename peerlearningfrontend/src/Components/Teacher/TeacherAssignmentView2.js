@@ -157,6 +157,31 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
 
     useEffect(() => { loadData() }, [userData.token, assg]);
 
+    const downloadCsvFile = async () => {
+        try {
+          const response = await fetch(`${API}/api/download?peer_assignment_id=${assg._id}&access_token=${userData.token}`, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${userData.token}`,
+            },
+          });
+    
+          if (response.status === 200) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Scores_sheet.csv'; // Set the desired file name
+            a.click();
+            window.URL.revokeObjectURL(url);
+          } else {
+            console.error("Failed to download CSV file");
+          }
+        } catch (error) {
+          console.error("API call error: ", error);
+        }
+      };
+
     const releaseScore = async () => {
 
         alert("releaseScore function called");
@@ -245,7 +270,7 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
                         </div>
                         <div className={styles.pdfDiv}>
                             <button className={styles.btn1}>Check for Abnormalities </button>
-                            <button className={styles.btn2}>View student Reviews</button>
+                            <button className={styles.btn2} onClick={downloadCsvFile}>Download student Reviews</button>
                             <button className={styles.btn3} onClick={() => setShowReleaseConfirmation(true)} >Release Scores </button>
                             <button className={styles.btn4}>View detailed Analytics </button>
                             <button className={styles.btn5}>Peer Learning activity completed </button>

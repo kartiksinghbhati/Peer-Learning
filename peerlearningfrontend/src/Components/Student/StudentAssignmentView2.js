@@ -69,8 +69,23 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
     const [viewReport2, setViewReport2] = useState(false);
     const [index, setIndex] = useState(-1);
     const [spin, setspin] = useState(true);
+    const [finalGrade, setFinalGrades] = useState(0);
 
     //console.log(assg);
+
+    let formattedDeadline = "";
+    if (assg.reviewer_deadline !== undefined) {
+        const deadlineDate = new Date(assg.reviewer_deadline);
+        const options = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        };
+        formattedDeadline = deadlineDate.toLocaleDateString('en-US', options);
+    }
 
     const truncate = (str) => {
         if (str) {
@@ -98,6 +113,19 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
                     setTeachersName(res.teachers[g].profile.name.fullName);
                     setspin(false);
                 });
+
+                await fetch(`${API}/api/assignmentscore?User_id=${self._id}&Assignment_id=${assg._id}`)
+                    .then((res) => res.json())
+                    .then((res) => {
+                        //console.log(res);
+
+                        if (res.length > 0) {
+                            //const userId = self._id;
+                            const marks = res[0].final_grade;
+
+                            setFinalGrades( marks);
+                        }
+                    });
         }
     }
 
@@ -133,7 +161,7 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
                                 <div className={styles.pointsanddue}>
                                     {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Ungraded</p>}
                                     <div className={styles.duediv}>
-                                        {assg.dueDate ? <p className={styles.due}>Due {assg.dueDate.day}/{assg.dueDate.month}/{assg.dueDate.year}, {assg.dueTime.minutes ? conversion(assg.dueTime.hours, assg.dueTime.minutes) : none(assg.dueTime.hours)} </p> : <p className={styles.due}>No Due Date</p>}
+                                        {assg.reviewer_deadline ? <p className={styles.due}>Due {formattedDeadline} </p> : <p className={styles.due}>No Due Date</p>}
                                     </div>
                                 </div>
                                 <Line className={styles.line} />
@@ -183,8 +211,7 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
                         </div>
                     </div>
                     <div className={styles.lower}>
-                        <p id={styles.consistency}>Your Assignment Consistency score </p>
-                        {/* <img id={styles.graph" src={Graph}/> */}
+                        <p id={styles.reviews}>Final Grade = {finalGrade} </p>
                         <p id={styles.Reviews}>Peer Reviews performed </p>
                         <div className={styles.performed}>
                             <div>

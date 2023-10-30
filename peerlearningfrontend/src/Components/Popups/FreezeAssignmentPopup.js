@@ -10,26 +10,54 @@ export default function FreezeAssignmentPopup({ assg, activities, freezeAssignme
     const [isLoading, setIsLoading] = useState(false);
 
     function finalGradeCal(activities) {
-        
         let final_grades = [];
-        
+        console.log(activities);
+        // This forEach loop iterating over all the student present in class
         activities.forEach((s) => {
-          if(s.length>1){
+          if (s.length > 1) {
             let grades = 0;
+            let count  = 0;
+            // This loop iterate over all the reviewer of that student
             for (let i = 1; i < s.length; i++) {
               let score = s[i].review_score;
-              for(let j = 0; j < score.length; j++){
-                grades = grades + score[j];
+              if(score.length != 0){
+                count ++;
+              }
+            //   This loop iterate to get total marks of each reviewer
+              for (let j = 0; j < score.length; j++) {
+                    console.log(score[j]);
+                    grades = grades + score[j];
               }
             }
-            let avgGrades = grades/(s.length-1); 
+            let avgGrades = grades / count;
             final_grades[s[0].userId] = parseFloat(avgGrades.toFixed(2));
           }
-          
         });
-
+    
         return final_grades;
-    }
+      }
+
+    // function finalGradeCal(activities) {
+        
+    //     let final_grades = [];
+        
+    //     activities.forEach((s) => {
+    //       if(s.length>1){
+    //         let grades = 0;
+    //         for (let i = 1; i < s.length; i++) {
+    //           let score = s[i].review_score;
+    //           for(let j = 0; j < score.length; j++){
+    //             grades = grades + score[j];
+    //           }
+    //         }
+    //         let avgGrades = grades/(s.length-1); 
+    //         final_grades[s[0].userId] = parseFloat(avgGrades.toFixed(2));
+    //       }
+          
+    //     });
+
+    //     return final_grades;
+    // }
 
 
     const finalMarksStore = async (index, grade) => {

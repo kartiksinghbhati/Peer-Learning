@@ -79,6 +79,22 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
     const [sub, setsub] = useState(false);
     const [marksvalue, SetmarksValue] = useState(false);
     const [count, setCount] = useState(0);
+    const [finalGrade, setFinalGrades] = useState(0);
+
+    let formattedDeadline = "";
+    if (assg.reviewer_deadline !== undefined) {
+        const deadlineDate = new Date(assg.reviewer_deadline);
+        const options = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        };
+        formattedDeadline = deadlineDate.toLocaleDateString('en-US', options);
+    }
+
 
     const truncate = (str) => {
         if (str) {
@@ -106,6 +122,19 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                     }
                     setTeachersName(res.teachers[g].profile.name.fullName);
                 });
+
+                await fetch(`${API}/api/assignmentscore?User_id=${self._id}&Assignment_id=${assg._id}`)
+                    .then((res) => res.json())
+                    .then((res) => {
+                        //console.log(res);
+
+                        if (res.length > 0) {
+                            //const userId = self._id;
+                            const marks = res[0].final_grade;
+
+                            setFinalGrades(marks);
+                        }
+                    });
         }
     }
 
@@ -120,6 +149,26 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
             alert('Model Answer Sheet link is not available');
         }
     };
+
+
+    // const getMarks = async () => {
+
+    //     if (userData.token) {
+
+    //         await fetch(`${API}/api/assignmentscore?User_id=${self._id}&Assignment_id=${assg._id}`)
+    //                 .then((res) => res.json())
+    //                 .then((res) => {
+    //                     //console.log(res);
+
+    //                     if (res.length > 0) {
+    //                         const userId = self._id;
+    //                         const marks = res[0].final_grade;
+
+    //                         setFinalGrades( marks);
+    //                     }
+    //                 });
+    //     }
+    // }
 
 
 
@@ -137,7 +186,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                             <div className={styles.pointsanddue}>
                                 {assg.maxPoints ? <p className={styles.points}>{assg.maxPoints} Points</p> : <p className={styles.points}>Points not Assigned</p>}
                                 <div className={styles.duediv}>
-                                    {assg.dueDate ? <p className={styles.due}>Due {assg.dueDate.day}/{assg.dueDate.month}/{assg.dueDate.year}, {assg.dueTime.minutes ? conversion(assg.dueTime.hours, assg.dueTime.minutes) : none(assg.dueTime.hours)} </p> : <p className={styles.due}>No Due Date</p>}
+                                    {assg.reviewer_deadline ? <p className={styles.due}>Due {formattedDeadline} </p> : <p className={styles.due}>No Due Date</p>}
                                 </div>
                             </div>
                             <Line className={styles.line} />
@@ -187,6 +236,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                     </div>
                 </div>
                 <div className={styles.Evaluation}>
+                    {assg.isFreeze ? <p id={styles.reviews}>Final Grade = {finalGrade} </p> : null}
                     <p id={styles.reviews}>Peer Reviews to be performed </p>
                     <div className={styles.Main}>
 
@@ -248,11 +298,11 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
             {<img src={bottom} alt="Image" className={styles.bottom} />}
 
             <PopUp wrapperValue={wrapper} SetWrapperValue={setwrapper} marks={marks} activities={activities} setActivities={setActivities} i={val} />
-            
+
             <Self wrapperValue={wrap} SetWrapperValue={setwrap} self={self} marks={marks} setSelf={setSelf} />
 
-            <FinalisePopup Finalise={Finalise} SetFinalise={SetFinalise} activities={activities} setActivities={setActivities} i={val} count={count} setCount={setCount}/>
-            <SelfFinalisePopup selfFinalise={selfFinalise} SetselfFinalise={SetselfFinalise} self={self} setSelf={setSelf} count={count} setCount={setCount}/>
+            <FinalisePopup Finalise={Finalise} SetFinalise={SetFinalise} activities={activities} setActivities={setActivities} i={val} count={count} setCount={setCount} />
+            <SelfFinalisePopup selfFinalise={selfFinalise} SetselfFinalise={SetselfFinalise} self={self} setSelf={setSelf} count={count} setCount={setCount} />
             <Submitpop Sub={sub} SetSub={setsub} self={self} setSelf={setSelf} activities={activities} setActivities={setActivities} />
 
             {/* Scoring Matrix */}
