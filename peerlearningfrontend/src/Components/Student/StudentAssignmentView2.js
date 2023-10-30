@@ -60,7 +60,7 @@ function none(hours) {
 }
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-function StudentAssignmentView2({ assg, activities, marks, setActivities, youractivities, setyourActivities }) {
+function StudentAssignmentView2({ assg, self, activities, marks, setActivities, youractivities, setyourActivities }) {
 
     const { userData } = useContext(AuthContext);
     const [TeachersName, setTeachersName] = useState([]);
@@ -119,11 +119,16 @@ function StudentAssignmentView2({ assg, activities, marks, setActivities, yourac
                     .then((res) => {
                         //console.log(res);
 
-                        if (res.length > 0) {
-                            //const userId = self._id;
-                            const marks = res[0].final_grade;
-
-                            setFinalGrades( marks);
+                        if (response.status === 200) {
+                            if (res.length > 0) {
+                                //const userId = self._id;
+                                const marks = res[0].final_grade;
+    
+                                setFinalGrades(marks);
+                            }
+                        }
+                        else{
+                            setFinalGrades(0);
                         }
                     });
         }

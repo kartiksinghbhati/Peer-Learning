@@ -122,7 +122,7 @@ const StudentAssignmentPage2 = () => {
                         {  role === "student" ?
                                 
                                  assignment1.status === "Assigned" ? <StudentAssignmentView1 assg={assignment1}  self={self} activities={activities} marks={marks} setSelf={setSelf} setActivities={setActivities} />
-                                 : <StudentAssignmentView2 assg={assignment1} activities={activities} marks={marks} setActivities={setActivities}/>
+                                 : <StudentAssignmentView2 assg={assignment1} self={self} activities={activities} marks={marks} setActivities={setActivities}/>
                             : null
                         }
                     </div>
