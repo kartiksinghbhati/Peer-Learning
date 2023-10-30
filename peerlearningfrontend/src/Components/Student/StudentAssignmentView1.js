@@ -127,7 +127,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                     .then((res) => res.json())
                     .then((res) => {
                         //console.log(res);
-                        if (response.status === 200) {
+                        if (res.status === 200) {
                             if (res.length > 0) {
                                 //const userId = self._id;
                                 const marks = res[0].final_grade;
