@@ -131,6 +131,7 @@
 }
 
 .pdfDiv {
+  position: relative;
   width: 300px;
   height: 326px;
   background: #ffffff;
@@ -138,6 +139,34 @@
   border-radius: 6px;
   text-align: center;
   margin-left: 40px;
+  overflow: visible;
+}
+
+
+.dropDown {
+  position: absolute;
+  top: 35%;
+  right: -50px;
+}
+
+.checkboxDropdown {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff; 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  padding: 8px; 
+}
+
+.checkboxDropdown label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.checkboxDropdown input {
+  margin-right: 8px;
 }
 
 .btn1 {
@@ -145,25 +174,68 @@
   background: #ffffff;
   color: #c5221f;
 }
+.buttonGroup {
+  display: flex;
+  align-items: center;
+}
 
-.btn2, .btn3, .btn4, .btn5{
+.btn2 {
+  margin-left: 25px;
   margin-top: 18px;
   background: #ffffff;
   color: #1A73E8;
 }
 
-.btn6 {
+.btn3 {
+  margin-top: 18px;
+  background: #ffffff;
+  color: #1A73E8;
+}
+
+.btn4, .btn5, .btn6{
+  margin-top: 18px;
+  background: #ffffff;
+  color: #1A73E8;
+}
+
+.btn7 {
   margin-top: 18px;
   color: #ffffff;
   background-color: #1A73E8;
 }
 
-.btn1, .btn2, .btn3, .btn4, .btn5, .btn6 {
+.btn1, .btn4, .btn5, .btn6, .btn7 {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 14px;
   line-height: 17px;
   width: 252px;
+  height: 34px;
+  border: 1px solid #dbdce0;
+  box-sizing: border-box;
+  border-radius: 6px;
+  letter-spacing: -0.02em;
+}
+
+.btn2 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  width: 222px;
+  height: 34px;
+  border: 1px solid #dbdce0;
+  box-sizing: border-box;
+  border-radius: 6px;
+  letter-spacing: -0.02em;
+}
+
+.btn3 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  width: 30px;
   height: 34px;
   border: 1px solid #dbdce0;
   box-sizing: border-box;

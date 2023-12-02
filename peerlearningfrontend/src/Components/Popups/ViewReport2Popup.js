@@ -3,7 +3,6 @@ import "./PopUp.css";
 
 export default function ViewReport2Popup({ viewReport2, setViewReport2, index, marks, activities}) {
 
-console.log(marks);
     return (
         <>
             {

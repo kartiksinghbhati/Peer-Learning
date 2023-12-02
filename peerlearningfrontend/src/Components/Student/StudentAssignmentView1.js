@@ -8,6 +8,7 @@ import { ReactComponent as Line } from "./Assests/Line.svg";
 import Thumbnail from "./Assests/thumbnail.png";
 import People from "./Assests/People.svg";
 import bottom from "../Images/Bottom.png";
+import Spinner from "../Spinner/Spinner";
 
 import PopUp from "../Popups/PopUp";
 import Self from "../Popups/SelfPopup";
@@ -16,60 +17,13 @@ import FinalisePopup from "../Popups/FinalisePop";
 import SelfFinalisePopup from "../Popups/selfFinalisePopup";
 import MarksPopup from "../Popups/MarksPopup";
 
-function conversion(hours, minutes) {
-    var t;
-    var h = hours + 5;
-    var m = minutes + 30;
-    if (m >= 60) {
-        h = h + 1;
-        m = 60 - m;
-    }
-    if (m < 10) {
-        m = "0" + m;
-    }
-    if (h >= 24)
-        h = h - 24;
-    if (h >= 12) {
-        t = 'PM';
-        if (h > 12)
-            h = h - 12;
-    }
-    else {
-        t = 'AM';
-        if (h < 10) {
-            h = "0" + h;
-        }
-    }
-    return h + ":" + m + " " + t;
-}
-
-function none(hours) {
-    var t;
-    var h = hours + 5;
-    var m = 30;
-    if (h >= 24)
-        h = h - 24;
-    if (h >= 12) {
-        t = 'PM';
-        if (h > 12)
-            h = h - 12;
-    }
-    else {
-        t = 'AM';
-        if (h < 10) {
-            h = "0" + h;
-        }
-    }
-    return h + ":" + m + " " + t;
-}
 
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setActivities }) {
 
-
-
     const { userData } = useContext(AuthContext);
+    const [spin, setSpin] = useState(true);
     const [TeachersName, setTeachersName] = useState([]);
     const [val, setval] = useState(-1);
     const [wrapper, setwrapper] = useState(false);
@@ -123,26 +77,26 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                     setTeachersName(res.teachers[g].profile.name.fullName);
                 });
 
-                await fetch(`${API}/api/assignmentscore?User_id=${self._id}&Assignment_id=${assg._id}`)
+                await fetch(`${API}/api/assignmentscore?User_id=${self.author_id}&Assignment_id=${assg._id}`)
                     .then((res) => res.json())
                     .then((res) => {
-                        //console.log(res);
-                        if (res.status === 200) {
-                            if (res.length > 0) {
-                                //const userId = self._id;
-                                const marks = res[0].final_grade;
+                        console.log(res);
+                        if (res.length > 0) {
     
-                                setFinalGrades(marks);
-                            }
+                                setFinalGrades(res[0].final_grade);
+                                setSpin(false);
                         }
                         else{
                             setFinalGrades(0);
+                            setSpin(false);
                         }
                     });
+
+                    //setSpin(false);
         }
     }
 
-    useEffect(() => { loadData() }, [userData.token]);
+    useEffect(() => { loadData() }, [userData.token, assg, self]);
 
     const openModelAnswerSheet = () => {
         if (assg.modelAnswerSheetUrl) {
@@ -155,30 +109,8 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
     };
 
 
-    // const getMarks = async () => {
-
-    //     if (userData.token) {
-
-    //         await fetch(`${API}/api/assignmentscore?User_id=${self._id}&Assignment_id=${assg._id}`)
-    //                 .then((res) => res.json())
-    //                 .then((res) => {
-    //                     //console.log(res);
-
-    //                     if (res.length > 0) {
-    //                         const userId = self._id;
-    //                         const marks = res[0].final_grade;
-
-    //                         setFinalGrades( marks);
-    //                     }
-    //                 });
-    //     }
-    // }
-
-
-
     return (
-        <>
-            <div>
+        <> {spin ? <Spinner/> :<div>
                 <div className={styles.mainDiv}>
                     <div className={styles.contentDiv}>
                         <div>
@@ -240,7 +172,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                     </div>
                 </div>
                 <div className={styles.Evaluation}>
-                    {assg.isFreeze ? <p id={styles.reviews}>Final Grade = {finalGrade} </p> : null}
+                    {assg.isFreeze && !spin ? <p id={styles.reviews}>Final Grade = {finalGrade} </p> : null}
                     <p id={styles.reviews}>Peer Reviews to be performed </p>
                     <div className={styles.Main}>
 
@@ -299,6 +231,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
                     </div>
                 </div>
             </div>
+                }
             {<img src={bottom} alt="Image" className={styles.bottom} />}
 
             <PopUp wrapperValue={wrapper} SetWrapperValue={setwrapper} marks={marks} activities={activities} setActivities={setActivities} i={val} />
@@ -311,6 +244,7 @@ function StudentAssignmentView1({ assg, self, activities, marks, setSelf, setAct
 
             {/* Scoring Matrix */}
             <MarksPopup marksvalue={marksvalue} SetmarksValue={SetmarksValue} marks={marks} activities={activities} />
+            
         </>
     )
 }

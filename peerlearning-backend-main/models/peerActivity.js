@@ -14,12 +14,12 @@ const peerActivitySchema = new mongoose.Schema({
     required: true,
   },
   review_score: {
-    type : Array ,
-    "default" : []
+    type: Array,
+    "default": []
   },
   reviewer_comment: {
-    type : Array ,
-    "default" : []
+    type: Array,
+    "default": []
   },
   material_drive_link: {
     type: String,
@@ -27,6 +27,10 @@ const peerActivitySchema = new mongoose.Schema({
   },
   final_grade: {
     type: Number,
+  },
+  time_stamp: {
+    type: String,
+    required: true,
   },
 })
 

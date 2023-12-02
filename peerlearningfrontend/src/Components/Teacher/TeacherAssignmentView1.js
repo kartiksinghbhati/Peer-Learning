@@ -61,31 +61,110 @@ import FreezeAssignmentPopup from "../Popups/FreezeAssignmentPopup";
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function bufferMarksCal(marks, tolerance) {
-
-  const buffer = [];
-
+  let total = 0;
   for (let i = 0; i < marks.length; i++) {
-    buffer.push((marks[i] * tolerance) / 100);
+    total = total + marks[i];
   }
+  let buffer = (total * tolerance) / 100;
 
   return buffer;
 }
 
-function compareMarks(row, bufferMarks) {
+function compareMarks1(row, bufferMark) {
 
   let flag = false;
-  const rs = row[1]?.review_score;
 
-  if (rs && rs.length > 0) {
-    for (let i = 2; i < row.length; i++) {
-      for (let j = 0; j < row[i].review_score.length; j++) {
-        const diff = Math.abs(rs[j] - row[i].review_score[j]);
-        if (diff > bufferMarks[j]) {
-          flag = true;
-        }
+  const totalMarks = [];
+
+  for (let i = 1; i < row.length; i++) {
+    let total = 0;
+
+    for (let j = 0; j < row[i].review_score.length; j++) {
+      total += row[i].review_score[j];
+    }
+    totalMarks.push(total);
+  }
+
+  for (let i = 0; i < totalMarks.length; i++) {
+    for (let j = i + 1; j < totalMarks.length; j++) {
+      const diff = Math.abs(totalMarks[i] - totalMarks[j]);
+      if (diff > bufferMark) {
+        flag = true;
       }
     }
+  }
 
+  return flag;
+}
+
+// Standard Deviation Function
+function calculateStandardDeviation(eachStudentFullMarks) {
+  // Step 1: Calculate the mean
+  const mean =
+    eachStudentFullMarks.reduce((sum, num) => sum + num, 0) /
+    eachStudentFullMarks.length;
+
+  // Step 2: Calculate the squared differences from the mean
+  const squaredDifferences = eachStudentFullMarks.map((num) =>
+    Math.pow(num - mean, 2)
+  );
+
+  // Step 3: Calculate the mean of the squared differences
+  const meanOfSquaredDifferences =
+    squaredDifferences.reduce((sum, squaredDiff) => sum + squaredDiff, 0) /
+    eachStudentFullMarks.length;
+
+  // Step 4: Take the square root to get the standard deviation
+  const standardDeviation = Math.sqrt(meanOfSquaredDifferences);
+
+  return standardDeviation;
+}
+//   Standard deviaiton function ends
+
+function compareMarks2(row) {
+  const eachStudentFullMarks = [];
+  let selfScore = null;
+  let flag = false;
+  const rs = row[1]?.review_score;
+  let standardDeviationOfAllReviewer = null;
+  let meanOfAllReviewerTotalMarks = 0;
+  if (row.length <= 3) {
+    standardDeviationOfAllReviewer = 0;
+  }
+
+  if (rs && rs.length > 0) {
+    // Self Total score calulations
+    for (let j = 0; j < row[1].review_score.length; j++) {
+      selfScore = selfScore + rs[j];
+    }
+    // row = array of no of students
+    for (let i = 2; i < row.length; i++) {
+      // review Score == is the array of score of each questions of one student
+      let oneReviewerScore = 0;
+      for (let j = 0; j < row[i].review_score.length; j++) {
+        oneReviewerScore = oneReviewerScore + row[i].review_score[j];
+      }
+      meanOfAllReviewerTotalMarks += oneReviewerScore;
+      if (!row[i].review_score.length == 0) {
+        eachStudentFullMarks.push(oneReviewerScore);
+      }
+    }
+    meanOfAllReviewerTotalMarks = meanOfAllReviewerTotalMarks / eachStudentFullMarks.length;
+    standardDeviationOfAllReviewer =
+      calculateStandardDeviation(eachStudentFullMarks);
+    if (isNaN(standardDeviationOfAllReviewer)) {
+      standardDeviationOfAllReviewer = 0;
+    }
+
+    if (
+      meanOfAllReviewerTotalMarks - standardDeviationOfAllReviewer <=
+      selfScore &&
+      selfScore <=
+      meanOfAllReviewerTotalMarks + standardDeviationOfAllReviewer
+    ) {
+    } else {
+      flag = true;
+    }
   }
 
   return flag;
@@ -95,15 +174,10 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
   //console.log(assg);
   //console.log(activities);
 
-
   const { userData, assignment } = useContext(AuthContext);
   const _id = assignment._id;
 
-  const bufferMarks = bufferMarksCal(marks, assg.tolerance);
-
-  const myActivities = activities;
-
-  //console.log(myActivities);
+  const bufferMark = bufferMarksCal(marks, assg.tolerance);
 
   var i = 200;
   var j = 1000;
@@ -119,6 +193,10 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
   const [showFreezeConfirmation, setShowFreezeConfirmation] = useState(false);
   const [showStopConfirmation, setShowStopConfirmation] = useState(false);
   const [sortFlaggedStudents, setSortFlaggedStudents] = useState(false);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const allOptions = ['onlyFinalGrade', 'showTime', 'showIndivisualQuestions'];
+  const [options, setOptions] = useState(allOptions);
 
   const truncate = (str) => {
     if (str) {
@@ -146,29 +224,29 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
 
     if (userData.token) {
 
-      if(activity.length>1){
+      if (activity.length > 1) {
 
         await fetch(`${API}/api/assignmentscore?User_id=${activity[0].userId}&Assignment_id=${assg._id}`)
-        .then((res) => res.json())
-        .then((res) => {
-          //console.log(res);
+          .then((res) => res.json())
+          .then((res) => {
+            //console.log(res);
 
-          if (res.length > 0) {
-            const userId = activity[0].userId;
-            const marks = res[0].final_grade;
-            
-            setFinalGrades((prevGrades) => ({
-              ...prevGrades, 
-              [userId]: marks,
-            }));
-          }
-        });
+            if (res.length > 0) {
+              const userId = activity[0].userId;
+              const marks = res[0].final_grade;
+
+              setFinalGrades((prevGrades) => ({
+                ...prevGrades,
+                [userId]: marks,
+              }));
+            }
+          });
 
       }
-      else{
+      else {
 
         setFinalGrades((prevGrades) => ({
-          ...prevGrades, 
+          ...prevGrades,
           [activity[0].userId]: 0,
         }));
 
@@ -176,7 +254,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
 
     }
   }
-  
+
   const loadData = async () => {
 
     if (userData.token) {
@@ -195,14 +273,14 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
             }
           }
           setTeacherName(res.teachers[g].profile.name.fullName);
-          
+
         });
 
-        await Promise.all(activities.map(activity => getMarks(activity)));
+      await Promise.all(activities.map(activity => getMarks(activity)));
 
-        
 
-        setspin(false);
+
+      setspin(false);
 
     }
   }
@@ -212,14 +290,37 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
   //useEffect(() => { getMarks() }, [userData.token]);
 
   const sortedActivities = activities.slice().sort((a, b) => {
-    const flagA = compareMarks(a, bufferMarks);
-    const flagB = compareMarks(b, bufferMarks);
+    const flagA = compareMarks1(a, bufferMark) || compareMarks2(a);
+    const flagB = compareMarks1(b, bufferMark) || compareMarks2(a);
     return sortFlaggedStudents ? flagB - flagA : 0;
   });
 
+
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleOptionToggle = (option) => {
+    if (option === 'All') {
+      setOptions(options.length === allOptions.length ? [] : allOptions);
+    } else {
+      setOptions((prevOptions) => {
+        if (prevOptions.includes(option)) {
+          return prevOptions.filter((opt) => opt !== option);
+        } else {
+          return [...prevOptions, option];
+        }
+      });
+    }
+  };
+
   const downloadCsvFile = async () => {
     try {
-      const response = await fetch(`${API}/api/download?peer_assignment_id=${assg._id}&access_token=${userData.token}`, {
+
+      const queryParams = options.map(option => `options[]=${encodeURIComponent(option)}`).join('&');
+
+      const response = await fetch(`${API}/api/download?peer_assignment_id=${assg._id}&access_token=${userData.token}&${queryParams}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${userData.token}`,
@@ -283,11 +384,39 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
             </div>
             <div className={styles.pdfDiv}>
               <button className={styles.btn1}>Check for Abnormalities </button>
-              <button className={styles.btn2} onClick={downloadCsvFile}>Download student Reviews</button>
-              <button className={styles.btn3} onClick={() => setSortFlaggedStudents(!sortFlaggedStudents)}>Sort Flagged Students</button>
-              <button className={styles.btn4} onClick={() => setShowFreezeConfirmation(true)}>Freeze Marks</button>
-              <button className={styles.btn5} onClick={() => setShowStopConfirmation(true)}>Stop Peer Learning </button>
-              <button className={styles.btn6}>View detailed Analytics </button>
+              <div className={styles.buttonGroup}>
+                <button className={styles.btn2} onClick={downloadCsvFile}>Download student Reviews</button>
+                <button className={styles.btn3} onClick={toggleDropdown}>&#9660;</button>
+              </div>
+              <div className={styles.dropDown}>
+
+                {isDropdownOpen && (
+                  <div className={styles.checkboxDropdown}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={options.length === allOptions.length}
+                        onChange={() => handleOptionToggle('All')}
+                      />
+                      All
+                    </label>
+                    {allOptions.map((option) => (
+                      <label key={option}>
+                        <input
+                          type="checkbox"
+                          checked={options.includes(option)}
+                          onChange={() => handleOptionToggle(option)}
+                        />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button className={styles.btn4} onClick={() => setSortFlaggedStudents(!sortFlaggedStudents)}>Sort Flagged Students</button>
+              <button className={styles.btn5} onClick={() => setShowFreezeConfirmation(true)}>Freeze Marks</button>
+              <button className={styles.btn6} onClick={() => setShowStopConfirmation(true)}>Stop Peer Learning </button>
+              <button className={styles.btn7}>View detailed Analytics </button>
             </div>
           </div>
           {/* <p className={styles.completeprogress}>Completion Progress</p> */}
@@ -307,7 +436,7 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                     {Array(reviewerCount)
                       .fill(0)
                       .map((_, i) => (
-                        <th key={`reviewer-${i}`}>Reviewer {i + 1}</th>
+                        <th key={`reviewer-${i}`}>{i === 0 ? "Self" : `Reviewer ${i }`}</th>
                       ))}
                   </tr>
                 </thead>
@@ -315,7 +444,9 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                 <tbody>
                   {sortedActivities.map((row, index) => {
 
-                    const flag = compareMarks(row, bufferMarks);
+                    const flag = compareMarks1(row, bufferMark) || compareMarks2(row);
+
+                    //const flag = false;
 
                     const studentName = flag ? styles.flagstudentFullName : styles.studentFullName;
 
@@ -343,14 +474,14 @@ export default function TeacherAssignmentView1({ assg, activities, marks, review
                               <ScoreCard
                                 data={r}
                                 questions={assg.total_questions}
-                                activities={myActivities}
+                                activities={activities}
                                 freezeAssignment={freezeAssignment}
                               >
                                 <div className={tdClassName}>
                                   {r.name.fullName}
                                 </div>
                                 <div className={styles.Score}>
-                                  {" ("+ r.review_score +")"}
+                                  {" (" + r.review_score + ")"}
                                 </div>
                               </ScoreCard>
                             </td>

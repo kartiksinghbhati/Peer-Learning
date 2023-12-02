@@ -66,6 +66,10 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
     const [finalGrades, setFinalGrades] = useState([]);
     const [spin, setspin] = useState(true);
     const [showReleaseConfirmation, setShowReleaseConfirmation] = useState(false);
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+    const allOptions = ['onlyFinalGrade', 'showTime', 'showIndivisualQuestions'];
+    const [options, setOptions] = useState(allOptions);
 
     const course_id = assg.course_id;
     const myActivities = activities;
@@ -157,30 +161,51 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
 
     useEffect(() => { loadData() }, [userData.token, assg]);
 
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleOptionToggle = (option) => {
+        if (option === 'All') {
+            setOptions(options.length === allOptions.length ? [] : allOptions);
+        } else {
+            setOptions((prevOptions) => {
+                if (prevOptions.includes(option)) {
+                    return prevOptions.filter((opt) => opt !== option);
+                } else {
+                    return [...prevOptions, option];
+                }
+            });
+        }
+    };
+
     const downloadCsvFile = async () => {
         try {
-          const response = await fetch(`${API}/api/download?peer_assignment_id=${assg._id}&access_token=${userData.token}`, {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${userData.token}`,
-            },
-          });
-    
-          if (response.status === 200) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Scores_sheet.csv'; // Set the desired file name
-            a.click();
-            window.URL.revokeObjectURL(url);
-          } else {
-            console.error("Failed to download CSV file");
-          }
+            const queryParams = options.map(option => `options[]=${encodeURIComponent(option)}`).join('&');
+
+            const response = await fetch(`${API}/api/download?peer_assignment_id=${assg._id}&access_token=${userData.token}&${queryParams}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${userData.token}`,
+                },
+            });
+
+            if (response.status === 200) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Scores_sheet.csv'; // Set the desired file name
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } else {
+                console.error("Failed to download CSV file");
+            }
         } catch (error) {
-          console.error("API call error: ", error);
+            console.error("API call error: ", error);
         }
-      };
+    };
 
     const releaseScore = async () => {
 
@@ -189,7 +214,7 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
         //const updateMask = 'assignedGrade,  draftGrade'; 
         // try {
         //     if (userData.token) {
-  
+
         //       await fetch(`${G_API}/courses/${course_id}/courseWork/${assg.assignment_id}/studentSubmissions`, {
         //         method: "GET",
         //         headers: {
@@ -198,11 +223,11 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
         //         })
         //           .then((res) => res.json())
         //           .then((res) => {
-  
+
         //             const studentSubmissionsArray = Object.values(res.studentSubmissions);
-  
+
         //             studentSubmissionsArray.forEach(async ( sub ) => {
-  
+
         //               await fetch(`${G_API}/courses/${course_id}/courseWork/${assg.assignment_id}/studentSubmissions/${sub.id}?updateMask=${updateMask}`, {
         //                 method: "PATCH",
         //                 headers: {
@@ -211,7 +236,7 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
         //                     "Content-Type": "application/json",
         //                 },
         //                   body: JSON.stringify({
-                            
+
         //                     assignedGrade : 15,
         //                     draftGrade : 10,
         //                   }),
@@ -221,7 +246,7 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
         //                     console.log(res);
         //                   });
         //             });
-  
+
         //           });
         //     }
         //   } catch (error) {
@@ -270,10 +295,40 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
                         </div>
                         <div className={styles.pdfDiv}>
                             <button className={styles.btn1}>Check for Abnormalities </button>
-                            <button className={styles.btn2} onClick={downloadCsvFile}>Download student Reviews</button>
-                            <button className={styles.btn3} onClick={() => setShowReleaseConfirmation(true)} >Release Scores </button>
-                            <button className={styles.btn4}>View detailed Analytics </button>
-                            <button className={styles.btn5}>Peer Learning activity completed </button>
+                            <div className={styles.buttonGroup}>
+                                <button className={styles.btn2} onClick={downloadCsvFile}>Download student Reviews</button>
+                                <button className={styles.btn3} onClick={toggleDropdown}>&#9660;</button>
+                            </div>
+
+                            <div className={styles.dropDown}>
+
+                                {isDropdownOpen && (
+                                    <div className={styles.checkboxDropdown}>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={options.length === allOptions.length}
+                                                onChange={() => handleOptionToggle('All')}
+                                            />
+                                            All
+                                        </label>
+                                        {allOptions.map((option) => (
+                                            <label key={option}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={options.includes(option)}
+                                                    onChange={() => handleOptionToggle(option)}
+                                                />
+                                                {option}
+                                            </label>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <button className={styles.btn4} onClick={() => setShowReleaseConfirmation(true)} >Release Scores </button>
+                            <button className={styles.btn5}>View detailed Analytics </button>
+                            <button className={styles.btn6}>Peer Learning activity completed </button>
                         </div>
                     </div>
 
@@ -292,13 +347,15 @@ export default function TeacherAssignmentView2({ assg, activities, reviewerCount
                                         {Array(reviewerCount)
                                             .fill(0)
                                             .map((_, i) => (
-                                                <th key={`reviewer-${i}`}>Reviewer {i + 1}</th>
+                                                <th key={`reviewer-${i}`}>{i === 0 ? "Self" : `Reviewer ${i }`}</th>
                                             ))}
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     {activities.map((row, index) => {
+
+                                            console.log(row);
 
                                         return (
                                             <tr key={row.name}>

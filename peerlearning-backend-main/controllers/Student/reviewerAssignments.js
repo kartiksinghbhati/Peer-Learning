@@ -19,8 +19,8 @@ exports.reviewerAssignments = async (req, res) => {
   //   }
   // )
 
-  console.log(peerAssignmentId);
-  console.log(userId);
+  //console.log(peerAssignmentId);
+  //console.log(userId);
   await peerActivity.find(
     { peerAssignment_id: peerAssignmentId, reviewer_id: userId },
     async (err, result) => {
