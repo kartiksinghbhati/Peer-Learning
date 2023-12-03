@@ -1,7 +1,9 @@
 import React from "react";
 import "./PopUp.css";
+import { API } from "../../config";
 
 export default function PopUp({ wrapperValue, SetWrapperValue, marks, activities, setActivities, i }) {
+
 
     const handleScoreChange = (i, k, e) => {
         let { value, min, max } = e.target;
@@ -9,6 +11,35 @@ export default function PopUp({ wrapperValue, SetWrapperValue, marks, activities
         const ac = activities;
         ac[i].review_score[k] = value;
         setActivities([...ac]);
+    };
+
+    // const saveMarks = () => {
+    //     SetWrapperValue(false);
+    // };
+
+    const saveMarks = async (row) => {
+        console.log(row);
+
+        await fetch(`${API}/api/reviewassignment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                peer_activity_id: row._id,
+                review_score: row.review_score,
+                reviewer_comment: row.reviewer_comment,
+            }),
+        })
+            .then((res) => res.json())
+            .then(
+                (res) => {
+                    SetWrapperValue(false);
+                },
+                (err) => {
+
+                    alert("Some thing went wrong while saving review");
+                    SetWrapperValue(false);
+                }
+            );
     };
 
     return (
@@ -35,6 +66,12 @@ export default function PopUp({ wrapperValue, SetWrapperValue, marks, activities
                                     </div>
                                 ))}
                             </div>
+
+                            <div id="button">
+                                <button id="saveButton" onClick={() => saveMarks(activities[i])}>Save</button>
+                                <button id="cancelButton" onClick={() => SetWrapperValue(false)}>Cancel</button>
+                            </div>
+
                         </div>
                     </div>
                 </div> : null
