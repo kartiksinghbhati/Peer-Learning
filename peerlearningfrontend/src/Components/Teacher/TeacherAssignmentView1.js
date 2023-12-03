@@ -13,51 +13,6 @@ import Spinner from "../Spinner/Spinner";
 import StopPeerLearningPopup from "../Popups/StopPeerLearningPopup";
 import FreezeAssignmentPopup from "../Popups/FreezeAssignmentPopup";
 
-// function conversion(hours, minutes) {
-//   var t;
-//   var h = hours + 5;
-//   var m = minutes + 30;
-//   if (m >= 60) {
-//     h = h + 1;
-//     m = 60 - m;
-//   }
-//   if (m < 10) {
-//     m = "0" + m;
-//   }
-//   if (h >= 24)
-//     h = h - 24;
-//   if (h >= 12) {
-//     t = 'PM';
-//     if (h > 12)
-//       h = h - 12;
-//   }
-//   else {
-//     t = 'AM';
-//     if (h < 10) {
-//       h = "0" + h;
-//     }
-//   }
-//   return h + ":" + m + " " + t;
-// }
-// function none(hours) {
-//   var t;
-//   var h = hours + 5;
-//   var m = 30;
-//   if (h >= 24)
-//     h = h - 24;
-//   if (h >= 12) {
-//     t = 'PM';
-//     if (h > 12)
-//       h = h - 12;
-//   }
-//   else {
-//     t = 'AM';
-//     if (h < 10) {
-//       h = "0" + h;
-//     }
-//   }
-//   return h + ":" + m + " " + t;
-// }
 
 var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -151,16 +106,25 @@ function compareMarks2(row) {
       }
       meanOfAllReviewerTotalMarks += oneReviewerScore;
       if (!row[i].review_score.length == 0) {
-        eachStudentFullMarks.push(oneReviewerScore);
+        if(oneReviewerScore==0)
+        {
+
+        }
+        else
+        {
+          eachStudentFullMarks.push(oneReviewerScore);
+        }
+        
       }
     }
+    // console.log(eachStudentFullMarks.length);
     meanOfAllReviewerTotalMarks = meanOfAllReviewerTotalMarks / eachStudentFullMarks.length;
     standardDeviationOfAllReviewer =
       calculateStandardDeviation(eachStudentFullMarks);
     if (isNaN(standardDeviationOfAllReviewer)) {
       standardDeviationOfAllReviewer = 0;
     }
-
+    console.log(meanOfAllReviewerTotalMarks)
     if (
       meanOfAllReviewerTotalMarks - standardDeviationOfAllReviewer <=
       selfScore &&
@@ -168,7 +132,15 @@ function compareMarks2(row) {
       meanOfAllReviewerTotalMarks + standardDeviationOfAllReviewer
     ) {
     } else {
-      flag = true;
+      if(isNaN(meanOfAllReviewerTotalMarks))
+      {
+
+      }
+      else
+      {
+        flag = true;
+      }
+      
     }
   }
 
