@@ -5,7 +5,7 @@ import { ReactComponent as AssignmentIcon } from "./Assests/Assignment.svg";
 import { ReactComponent as Line } from "./Assests/Line.svg";
 import thumbnail from "../Student/Assests/thumbnail.png";
 import redflag from "../Images/redflag.png";
-import yellowflag from "../Images/yellowflag.jpeg"
+import yellowflag from "../Images/yellowflag.png"
 import bottom from "../Images/Bottom.png";
 import styles from "./TeacherAssignmentView1.module.css";
 import { ScoreCard } from "./ScoreCard";
